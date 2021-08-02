@@ -1,11 +1,11 @@
 import { BoardType, PieceType } from './types';
 
-const { BLACK_PIECE, WHITE_PIECE } = PieceType;
+const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 
 // set up the initial board position
 const initial: BoardType = as2DArray(new ArrayBuffer(64));
-initial[3][3] = initial[4][4] = WHITE_PIECE;
-initial[3][4] = initial[4][3] = BLACK_PIECE;
+initial[3][3] = initial[4][4] = BLACK_PIECE;
+initial[3][4] = initial[4][3] = WHITE_PIECE;
 
 // make a copy of the initial board position
 export function newBoard(): BoardType {
@@ -44,4 +44,21 @@ const xLookup = 'ABCDEFGH';
 const yLookup = '12345678';
 export function coordsToString(x: number, y: number): string {
   return `${xLookup[x]}${yLookup[y]}`;
+}
+
+export function dumpBoard(board: BoardType): void {
+  // eslint-disable-next-line no-console
+  console.log(
+    [
+      '  A B C D E F G H',
+      ...board.map((row, y) =>
+        [
+          8 - y,
+          ...Array.from(row).map((cell) =>
+            cell === EMPTY ? '.' : cell === BLACK_PIECE ? 'X' : 'O'
+          ),
+        ].join(' ')
+      ),
+    ].join('\n')
+  );
 }
