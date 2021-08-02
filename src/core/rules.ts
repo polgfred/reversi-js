@@ -27,54 +27,39 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     for (let y = 0; y < 8; y += side) {
       for (let x = 0; x < 8; x += side) {
         // only empty squares are playable
-        if (board[y][x] !== EMPTY) {
-          continue;
-        }
-        // have we found captures from this position?
-        let found = false;
+        if (board[y][x] !== EMPTY) continue;
         // loop through the directions (dx, dy) from this square
-        for (let dx = -1; dx <= 1; ++dx) {
+        dirs: for (let dx = -1; dx <= 1; ++dx) {
           for (let dy = -1; dy <= 1; ++dy) {
             // (don't count 0,0)
-            if (dx === 0 && dy === 0) {
-              continue;
-            }
+            if (dx === 0 && dy === 0) continue;
             // start from the current square
             let nx = x;
             let ny = y;
             // the number of captures in this direction
-            let count = 0;
+            let captures = 0;
             // keep moving in this direction until...
             for (;;) {
               nx += dx;
               ny += dy;
               // - we've gone off the board, no capture
-              if (nx < 0 || nx > 7 || ny < 0 || ny > 7) {
-                count = 0;
-                break;
-              }
+              if (nx < 0 || nx > 7 || ny < 0 || ny > 7) break;
               const p = board[ny][nx];
               // - we've hit an empty square, no capture
-              if (p === EMPTY) {
-                count = 0;
-                break;
-              }
+              if (p === EMPTY) break;
               // - we've hit our piece
               if (p === mine) {
                 // if we've captured anything, flag it
-                if (count > 0) {
-                  found = true;
+                if (captures > 0) {
+                  plays.push([x, y]);
+                  break dirs;
                 }
                 break;
               }
-              // - we've hit our opponents piece, count it and keep going
-              ++count;
+              // - keep going
+              ++captures;
             }
           }
-        }
-        // this is a valid play
-        if (found) {
-          plays.push([x, y]);
         }
       }
     }
