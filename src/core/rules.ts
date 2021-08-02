@@ -46,8 +46,10 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
   const board = copyBoard(_board);
 
   function findPlays() {
-    // keep track of captures
-    const captures: Capture[] = [];
+    // keep track of plays
+    const plays: Capture[] = [];
+    // reuse capture buffer
+    const cap: MutableCapture = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     // my piece value
     const mine = side === BLACK ? BLACK_PIECE : WHITE_PIECE;
     // loop through the squares
@@ -55,10 +57,15 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
       for (let x = 0; x < 8; x += side) {
         // only empty squares are playable
         if (board[y][x] !== EMPTY) continue;
-        const cap: MutableCapture = [x, y, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let found = false; // whether we found a valid capture
+        // whether we found a valid capture
+        let found = false;
+        // reset capture buffer
+        cap[0] = x;
+        cap[1] = y;
+        cap.fill(0, 2);
+        // direction index for capture
+        let dir = 2;
         // loop through the directions (dx, dy) from this square
-        let dir = 2; // direction index for capture
         for (let dy = -1; dy <= 1; ++dy) {
           for (let dx = -1; dx <= 1; ++dx, ++dir) {
             // (don't count 0,0)
@@ -84,14 +91,14 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
             }
           }
         }
-        // if any captures were found
+        // save if any captures were found
         if (found) {
-          captures.push(cap);
+          plays.push([...cap]);
         }
       }
     }
     // return the plays from this position
-    return captures;
+    return plays;
   }
 
   function doPlay(cap: Capture) {
@@ -102,8 +109,9 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     const theirs = side === BLACK ? WHITE_PIECE : BLACK_PIECE;
     // put down the piece
     board[y][x] = mine;
+    // direction index for capture
+    let dir = 2;
     // loop through the directions (dx, dy) from this square
-    let dir = 2; // direction index for capture
     for (let dy = -1; dy <= 1; ++dy) {
       for (let dx = -1; dx <= 1; ++dx, ++dir) {
         // (don't count 0,0)
@@ -120,8 +128,9 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     return () => {
       // pick up the piece
       board[y][x] = EMPTY;
+      // direction index for capture
+      let dir = 2;
       // loop through the directions (dx, dy) from this square
-      let dir = 2; // direction index for capture
       for (let dy = -1; dy <= 1; ++dy) {
         for (let dx = -1; dx <= 1; ++dx, ++dir) {
           // (don't count 0,0)
