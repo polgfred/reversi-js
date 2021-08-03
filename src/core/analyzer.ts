@@ -33,9 +33,16 @@ export function analyze(
     for (const move of findMoves()) {
       // perform the move and descend a level
       const reverse = doMove(move);
-      const current = level === 1 ? evaluate(board) : loop(level - 1)[1];
+      // get the score for this move
+      const current =
+        level === 1
+          ? // call the evaluator directly
+            evaluate(board)
+          : // descend a level and grab the score
+            loop(level - 1)[1];
+      // undo the move
       reverse();
-      // check if this was a better move
+      // check if we got a better score
       if (
         (side === BLACK && current > bestScore) ||
         (side === WHITE && current < bestScore)
