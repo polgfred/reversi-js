@@ -1,22 +1,8 @@
 import { copyBoard } from './utils';
 
-import { BoardType, SideType, PieceType } from './types';
+import { Capture, BoardType, SideType, PieceType } from './types';
 
-type Capture = readonly [
-  number, // x
-  number, // y
-  number, // number of pieces captured SW
-  number, // number of pieces captured S
-  number, // number of pieces captured SE
-  number, // number of pieces captured W
-  number, // unused
-  number, // number of pieces captured E
-  number, // number of pieces captured NW
-  number, // number of pieces captured N
-  number // number of pieces captured NE
-];
-
-// annoying
+// annoying - mutable version of Capture tuple
 type MutableCapture = [
   number,
   number,
@@ -53,8 +39,8 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     // my piece value
     const mine = side === BLACK ? BLACK_PIECE : WHITE_PIECE;
     // loop through the squares
-    for (let y = 0; y < 8; y += side) {
-      for (let x = 0; x < 8; x += side) {
+    for (let y = 0; y < 8; ++y) {
+      for (let x = 0; x < 8; ++x) {
         // only empty squares are playable
         if (board[y][x] !== EMPTY) continue;
         // whether we found a valid capture
@@ -123,6 +109,8 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
           board[ny][nx] = mine;
         }
       }
+      // switch sides
+      side = -side;
     }
     // reverser
     return () => {
@@ -142,6 +130,8 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
             board[ny][nx] = theirs;
           }
         }
+        // switch sides
+        side = -side;
       }
     };
   }

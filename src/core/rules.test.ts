@@ -5,7 +5,7 @@ import { newBoard, newBoardFromData, dumpBoard } from './utils';
 const { BLACK } = SideType;
 const { BLACK_PIECE, WHITE_PIECE } = PieceType;
 
-describe('rules', () => {
+describe('Rules', () => {
   it('should initialize the board', () => {
     const { getBoard } = makeRules(newBoard(), BLACK);
     const board = getBoard();
