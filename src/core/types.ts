@@ -5,7 +5,6 @@ export type Capture = readonly [
   number, // number of pieces captured N
   number, // number of pieces captured NE
   number, // number of pieces captured W
-  number, // unused
   number, // number of pieces captured E
   number, // number of pieces captured SW
   number, // number of pieces captured S

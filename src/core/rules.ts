@@ -13,7 +13,6 @@ type MutableCapture = [
   number,
   number,
   number,
-  number,
   number
 ];
 
@@ -35,7 +34,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     // keep track of plays
     const plays: Capture[] = [];
     // reuse capture buffer
-    const cap: MutableCapture = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const cap: MutableCapture = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     // my piece value
     const mine = side === BLACK ? BLACK_PIECE : WHITE_PIECE;
     // loop through the squares
@@ -49,23 +48,25 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
         cap[0] = x;
         cap[1] = y;
         cap.fill(0, 2);
-        // direction index for capture
+        // direction index for capture (after x, y)
         let dir = 2;
         // loop through the directions (dx, dy) from this square
         for (let dy = -1; dy <= 1; ++dy) {
-          for (let dx = -1; dx <= 1; ++dx, ++dir) {
-            // (don't count 0,0)
+          for (let dx = -1; dx <= 1; ++dx) {
+            // (don't count 0, 0)
             if (dx === 0 && dy === 0) continue;
-            // count captured pieces until...
-            for (let nx = x, ny = y, count = 0; ; ++count) {
+            // try to find a capture starting from (x, y)
+            let nx = x;
+            let ny = y;
+            for (let count = 0; ; ++count) {
               nx += dx;
               ny += dy;
-              // - we've gone off the board, no capture
+              // we've gone off the board, no capture
               if (nx < 0 || nx > 7 || ny < 0 || ny > 7) break;
               const p = board[ny][nx];
-              // - we've hit an empty square, no capture
+              // we've hit an empty square, no capture
               if (p === EMPTY) break;
-              // - we've hit our piece
+              // we've hit our piece
               if (p === mine) {
                 // if we've captured anything, flag it
                 if (count > 0) {
@@ -75,6 +76,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
                 break;
               }
             }
+            ++dir;
           }
         }
         // save if any captures were found
@@ -95,40 +97,47 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     const theirs = side === BLACK ? WHITE_PIECE : BLACK_PIECE;
     // put down the piece
     board[y][x] = mine;
-    // direction index for capture
+    // direction index for capture (after x, y)
     let dir = 2;
     // loop through the directions (dx, dy) from this square
     for (let dy = -1; dy <= 1; ++dy) {
-      for (let dx = -1; dx <= 1; ++dx, ++dir) {
-        // (don't count 0,0)
+      for (let dx = -1; dx <= 1; ++dx) {
+        // (don't count 0, 0)
         if (dx === 0 && dy === 0) continue;
-        for (let nx = x, ny = y, count = cap[dir]; count > 0; --count) {
+        // flip `count` pieces starting from (x, y)
+        let nx = x;
+        let ny = y;
+        for (let count = cap[dir]; count > 0; --count) {
           nx += dx;
           ny += dy;
-          // flip the piece
           board[ny][nx] = mine;
         }
+        ++dir;
       }
       // switch sides
       side = -side;
     }
+
     // reverser
     return () => {
       // pick up the piece
       board[y][x] = EMPTY;
-      // direction index for capture
+      // direction index for capture (after x, y)
       let dir = 2;
       // loop through the directions (dx, dy) from this square
       for (let dy = -1; dy <= 1; ++dy) {
-        for (let dx = -1; dx <= 1; ++dx, ++dir) {
-          // (don't count 0,0)
+        for (let dx = -1; dx <= 1; ++dx) {
+          // (don't count 0, 0)
           if (dx === 0 && dy === 0) continue;
-          for (let nx = x, ny = y, count = cap[dir]; count > 0; --count) {
+          // flip `count` pieces starting from (x, y)
+          let nx = x;
+          let ny = y;
+          for (let count = cap[dir]; count > 0; --count) {
             nx += dx;
             ny += dy;
-            // flip the piece back
             board[ny][nx] = theirs;
           }
+          ++dir;
         }
         // switch sides
         side = -side;
