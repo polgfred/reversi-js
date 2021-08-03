@@ -10,19 +10,19 @@ describe('Rules', () => {
     const { getBoard } = makeRules(newBoard(), BLACK);
     const board = getBoard();
     dumpBoard(board);
-    expect(board[3][3]).toBe(BLACK_PIECE);
-    expect(board[3][4]).toBe(WHITE_PIECE);
-    expect(board[4][3]).toBe(WHITE_PIECE);
-    expect(board[4][4]).toBe(BLACK_PIECE);
+    expect(board[3][3]).toBe(WHITE_PIECE);
+    expect(board[4][3]).toBe(BLACK_PIECE);
+    expect(board[3][4]).toBe(BLACK_PIECE);
+    expect(board[4][4]).toBe(WHITE_PIECE);
   });
 
   it('should find the plays from the initial position', () => {
     const { findPlays } = makeRules(newBoard(), BLACK);
     expect(findPlays()).toEqual([
-      [4, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-      [5, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-      [2, 4, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-      [3, 5, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+      [3, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+      [2, 3, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+      [5, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+      [4, 5, 0, 1, 0, 0, 0, 0, 0, 0, 0],
     ]);
   });
 });

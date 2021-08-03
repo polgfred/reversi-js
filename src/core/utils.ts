@@ -4,8 +4,8 @@ const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 
 // set up the initial board position
 const initial: BoardType = as2DArray(new ArrayBuffer(64));
-initial[3][3] = initial[4][4] = BLACK_PIECE;
-initial[3][4] = initial[4][3] = WHITE_PIECE;
+initial[3][3] = initial[4][4] = WHITE_PIECE;
+initial[3][4] = initial[4][3] = BLACK_PIECE;
 
 // make a copy of the initial board position
 export function newBoard(): BoardType {
@@ -53,7 +53,7 @@ export function dumpBoard(board: BoardType): void {
       '  A B C D E F G H',
       ...board.map((row, y) =>
         [
-          8 - y,
+          y + 1,
           ...Array.from(row).map((cell) =>
             cell === EMPTY ? '.' : cell === BLACK_PIECE ? 'X' : 'O'
           ),
