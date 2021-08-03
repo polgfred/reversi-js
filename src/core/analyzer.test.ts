@@ -5,9 +5,8 @@ import { newBoard, newBoardFromData } from './utils';
 const { BLACK } = SideType;
 
 describe('Analyzer', () => {
-  it('should find the best play from this position', () => {
-    const [play, score] = analyze(newBoard(), BLACK);
-    console.log(play, score);
-    expect(0).toEqual(0);
+  it('should run the evaluator on this position', () => {
+    const [, score] = analyze(newBoard(), BLACK, 0);
+    expect(score).toEqual(0);
   });
 });
