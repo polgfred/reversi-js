@@ -1,4 +1,4 @@
-import { Capture, BoardType, SideType } from './types';
+import { MoveType, BoardType, SideType } from './types';
 import { makeRules } from './rules';
 import { evaluate } from './evaluator';
 
@@ -11,8 +11,8 @@ export function analyze(
   board: BoardType,
   side: SideType,
   level: number = LEVEL
-): readonly [Capture, number] {
-  const { getBoard, getSide, findPlays, doPlay } = makeRules(board, side);
+): readonly [MoveType, number] {
+  const { getBoard, getSide, findMoves, doMove } = makeRules(board, side);
   // start the descent
   return loop(level);
 
@@ -21,14 +21,14 @@ export function analyze(
     const board = getBoard();
     const side = getSide();
     let bestScore = -side / 0;
-    let bestPlay: Capture;
+    let bestMove: MoveType;
 
     if (level > 0) {
       // analyze counter-moves from this position
-      const plays = findPlays();
-      for (const cap of plays) {
-        // perform the play and descend a level
-        const reverse = doPlay(cap);
+      const moves = findMoves();
+      for (const move of moves) {
+        // perform the move and descend a level
+        const reverse = doMove(move);
         const [, current] = loop(level - 1);
         reverse();
         // keep track of the best move from this position
@@ -36,7 +36,7 @@ export function analyze(
           (side === BLACK && current > bestScore) ||
           (side === WHITE && current < bestScore)
         ) {
-          bestPlay = cap;
+          bestMove = move;
           bestScore = current;
         }
       }
@@ -44,7 +44,7 @@ export function analyze(
       // we've hit bottom so just return the score for this position
       bestScore = evaluate(board);
     }
-    // a pair representing the winning play and score for this turn
-    return [bestPlay, bestScore] as const;
+    // a pair representing the winning move and score for this turn
+    return [bestMove, bestScore] as const;
   }
 }
