@@ -21,5 +21,5 @@ export type MoveType = readonly [
   number, // number of pieces captured E
   number, // number of pieces captured SW
   number, // number of pieces captured S
-  number // number of pieces captured SE
+  number, // number of pieces captured SE
 ];

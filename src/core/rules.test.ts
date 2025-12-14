@@ -1,6 +1,8 @@
+import { describe, expect, it } from 'bun:test';
+
 import { makeRules } from './rules';
 import { SideType, PieceType } from './types';
-import { newBoard, newBoardFromData, dumpBoard } from './utils';
+import { newBoard, dumpBoard } from './utils';
 
 const { BLACK } = SideType;
 const { BLACK_PIECE, WHITE_PIECE } = PieceType;

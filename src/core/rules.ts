@@ -13,7 +13,7 @@ type MutableMoveType = [
   number,
   number,
   number,
-  number
+  number,
 ];
 
 const { BLACK } = SideType;
