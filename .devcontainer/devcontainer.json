@@ -1,0 +1,15 @@
+{
+	"name": "Reversi-JS",
+	"image": "mcr.microsoft.com/devcontainers/base:trixie",
+	"features": {
+		"./features/bun": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"dbaeumer.vscode-typescript-javascript"
+			]
+		}
+	}
+}
