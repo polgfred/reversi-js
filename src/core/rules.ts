@@ -1,22 +1,8 @@
-import { copyBoard } from './utils';
-
 import { MoveType, BoardType, SideType, PieceType } from './types';
 
-// annoying - mutable version of Capture tuple
-type MutableMoveType = [
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-];
+type Mutable<T> = { -readonly [K in keyof T]: T[K] };
 
-const { BLACK } = SideType;
+const { BLACK, WHITE } = SideType;
 const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 
 export interface Rules {
@@ -26,15 +12,23 @@ export interface Rules {
   readonly doMove: (move: MoveType) => () => void;
 }
 
-export function makeRules(_board: BoardType, side: SideType): Rules {
-  // don't mutate the caller's board
-  const board = copyBoard(_board);
+export function makeRules(board: BoardType, side: SideType): Rules {
+  function switchSides() {
+    switch (side) {
+      case BLACK:
+        side = WHITE;
+        break;
+      case WHITE:
+        side = BLACK;
+        break;
+    }
+  }
 
   function findMoves() {
     // keep track of moves
     const moves: MoveType[] = [];
     // reuse capture buffer
-    const move: MutableMoveType = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const move: Mutable<MoveType> = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     // my piece value
     const mine = side === BLACK ? BLACK_PIECE : WHITE_PIECE;
     // loop through the squares
@@ -62,7 +56,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
               nx += dx;
               ny += dy;
               // we've gone off the board, no capture
-              if (nx < 0 || nx > 7 || ny < 0 || ny > 7) break;
+              if (((nx | ny) & ~7) !== 0) break;
               const p = board[ny][nx];
               // we've hit an empty square, no capture
               if (p === EMPTY) break;
@@ -114,8 +108,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
         }
         ++dir;
       }
-      // switch sides
-      side = -side;
+      switchSides();
     }
 
     // reverser
@@ -139,8 +132,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
           }
           ++dir;
         }
-        // switch sides
-        side = -side;
+        switchSides();
       }
     };
   }

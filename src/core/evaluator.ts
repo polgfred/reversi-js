@@ -7,6 +7,7 @@ const values = [[90], [10, 5], [30, 10, 30], [20, 10, 20, 10]];
 
 // piece values for heuristic evaluator
 const scores: number[][] = [[], [], [], [], [], [], [], []];
+
 for (let y = 0; y < 8; ++y) {
   for (let x = 0; x < 8; ++x) {
     // reflected values of x and y
@@ -28,15 +29,20 @@ for (let y = 0; y < 8; ++y) {
 
 export function evaluate(board: BoardType): number {
   let total = 0;
+
   for (let y = 0; y < 8; ++y) {
     for (let x = 0; x < 8; ++x) {
       const p = board[y][x];
-      if (p === BLACK_PIECE) {
-        total += scores[y][x];
-      } else if (p === WHITE_PIECE) {
-        total -= scores[y][x];
+      switch (p) {
+        case BLACK_PIECE:
+          total += scores[y][x];
+          break;
+        case WHITE_PIECE:
+          total -= scores[y][x];
+          break;
       }
     }
   }
+
   return total;
 }
