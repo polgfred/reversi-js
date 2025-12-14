@@ -26,6 +26,93 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     }
   }
 
+  function canMove(move: Mutable<MoveType>) {
+    const [x, y] = move;
+
+    // only empty squares are moveable
+    if (board[y][x] !== EMPTY) {
+      return false;
+    }
+
+    // whether we found a capture
+    let found = false;
+
+    // direction index for capture (after x, y)
+    let dir = 2;
+
+    // loop through the directions (dx, dy) from this square
+    for (let dy = -1; dy <= 1; ++dy) {
+      for (let dx = -1; dx <= 1; ++dx) {
+        // (don't count 0, 0)
+        if (dx === 0 && dy === 0) {
+          continue;
+        }
+
+        // try to find a capture starting from (x, y)
+        let nx = x;
+        let ny = y;
+        move[dir] = 0;
+        for (let count = 0; ; ++count) {
+          nx += dx;
+          ny += dy;
+
+          // we've gone off the board, no capture
+          if (((nx | ny) & ~7) !== 0) {
+            break;
+          }
+
+          // stop when we hit an empty square
+          const p = board[ny][nx];
+          if (p === EMPTY) {
+            break;
+          }
+
+          // we hit our own piece
+          if (p === side) {
+            // see if we captured anything
+            if (count > 0) {
+              found = true;
+              move[dir] = count;
+            }
+            break;
+          }
+        }
+
+        ++dir;
+      }
+    }
+
+    return found;
+  }
+
+  function replace(p: PieceType, move: MoveType) {
+    const [x, y] = move;
+
+    // direction index for capture (after x, y)
+    let dir = 2;
+
+    // loop through the directions (dx, dy) from this square
+    for (let dy = -1; dy <= 1; ++dy) {
+      for (let dx = -1; dx <= 1; ++dx) {
+        // (don't count 0, 0)
+        if (dx === 0 && dy === 0) {
+          continue;
+        }
+
+        // flip `count` pieces starting from (x, y)
+        let nx = x;
+        let ny = y;
+        for (let count = move[dir]; count !== 0; --count) {
+          nx += dx;
+          ny += dy;
+          board[ny][nx] = p;
+        }
+
+        ++dir;
+      }
+    }
+  }
+
   function* findMoves(): MoveGenerator {
     // reuse capture buffer
     const move: Mutable<MoveType> = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -42,118 +129,25 @@ export function makeRules(board: BoardType, side: SideType): Rules {
           continue;
         }
 
-        // whether this is a valid play (we found a capture)
-        let found = false;
-
-        // reset capture buffer
         move[0] = x;
         move[1] = y;
-        move.fill(0, 2);
 
-        // direction index for capture (after x, y)
-        let dir = 2;
-
-        // loop through the directions (dx, dy) from this square
-        for (let dy = -1; dy <= 1; ++dy) {
-          for (let dx = -1; dx <= 1; ++dx) {
-            // (don't count 0, 0)
-            if (dx === 0 && dy === 0) {
-              continue;
-            }
-
-            // try to find a capture starting from (x, y)
-            let nx = x;
-            let ny = y;
-            loop: for (let count = 0; ; ++count) {
-              nx += dx;
-              ny += dy;
-
-              // we've gone off the board, no capture
-              if (((nx | ny) & ~7) !== 0) {
-                break;
-              }
-
-              switch (board[ny][nx]) {
-                case EMPTY:
-                  break loop;
-                case mine:
-                  // if we've captured anything, flag it
-                  if (count > 0) {
-                    found = true;
-                    move[dir] = count;
-                  }
-                  break loop;
-                case theirs:
-                  break;
-              }
-            }
-            ++dir;
-          }
-        }
-
-        if (!found) {
+        // see if we found a capture
+        if (!canMove(move)) {
           // not a valid move
           continue;
         }
 
         try {
-          // put down the piece
           board[y][x] = mine;
-
-          // direction index for capture (after x, y)
-          let dir = 2;
-
-          // loop through the directions (dx, dy) from this square
-          for (let dy = -1; dy <= 1; ++dy) {
-            for (let dx = -1; dx <= 1; ++dx) {
-              // (don't count 0, 0)
-              if (dx === 0 && dy === 0) {
-                continue;
-              }
-
-              // flip `count` pieces starting from (x, y)
-              let nx = x;
-              let ny = y;
-              for (let count = move[dir]; count > 0; --count) {
-                nx += dx;
-                ny += dy;
-                board[ny][nx] = mine;
-              }
-              ++dir;
-            }
-          }
-
+          replace(mine, move);
           switchSides();
 
           yield [...move];
         } finally {
           switchSides();
-
-          // pick up the piece
           board[y][x] = EMPTY;
-
-          // direction index for capture (after x, y)
-          let dir = 2;
-
-          // loop through the directions (dx, dy) from this square
-          for (let dy = -1; dy <= 1; ++dy) {
-            for (let dx = -1; dx <= 1; ++dx) {
-              // (don't count 0, 0)
-              if (dx === 0 && dy === 0) {
-                continue;
-              }
-
-              // flip `count` pieces starting from (x, y)
-              let nx = x;
-              let ny = y;
-              for (let count = move[dir]; count > 0; --count) {
-                nx += dx;
-                ny += dy;
-                board[ny][nx] = theirs;
-              }
-              ++dir;
-            }
-          }
+          replace(theirs, move);
         }
       }
     }
