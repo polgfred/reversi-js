@@ -9,13 +9,11 @@ const LEVEL = 10;
 
 export function analyze(
   board: BoardType,
-  side: SideType
+  side: SideType,
+  level = LEVEL
 ): readonly [number, MoveType] {
   // get the rules
   const { getSide, findMoves } = makeRules(board, side);
-
-  // start the descent
-  let level = LEVEL;
 
   return loop(-Infinity, +Infinity);
 

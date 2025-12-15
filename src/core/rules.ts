@@ -160,33 +160,10 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     // piece values
     const mine = side === BLACK ? BLACK_PIECE : WHITE_PIECE;
 
-    // put down the piece
+    // put down the piece and do the flips
     board[y][x] = mine;
-
-    // direction index for capture (after x, y)
-    let dir = 2;
-
-    // loop through the directions (dx, dy) from this square
-    for (let dy = -1; dy <= 1; ++dy) {
-      for (let dx = -1; dx <= 1; ++dx) {
-        // (don't count 0, 0)
-        if (dx === 0 && dy === 0) {
-          continue;
-        }
-
-        // flip `count` pieces starting from (x, y)
-        let nx = x;
-        let ny = y;
-        for (let count = move[dir]; count > 0; --count) {
-          nx += dx;
-          ny += dy;
-          board[ny][nx] = mine;
-        }
-        ++dir;
-      }
-
-      switchSides();
-    }
+    replace(mine, move);
+    switchSides();
   }
 
   return {
