@@ -2,7 +2,7 @@ import { MoveType, BoardType, SideType } from './types';
 import { makeRules } from './rules';
 import { evaluate } from './evaluator';
 
-const { BLACK, WHITE } = SideType;
+const { BLACK } = SideType;
 
 // how many levels deep to search the tree
 const LEVEL = 8;
@@ -11,14 +11,10 @@ export function analyze(
   board: BoardType,
   side: SideType,
   level: number = LEVEL
-): readonly [MoveType, number] {
-  // make sure level is valid
-  if (level < 1) {
-    throw new Error('level < 1');
-  }
-
+): readonly [number, MoveType] {
   // get the rules
-  const { getBoard, getSide, findMoves, doMove } = makeRules(board, side);
+  const { getBoard, getSide, findMoves } = makeRules(board, side);
+
   // start the descent
   return loop(level);
 
@@ -26,32 +22,28 @@ export function analyze(
   function loop(level: number) {
     const board = getBoard();
     const side = getSide();
+
     // keep track of best move and score so far
-    let bestMove: MoveType;
-    let bestScore = -side / 0;
-    // analyze counter-moves from this position
-    for (const move of findMoves()) {
-      // perform the move and descend a level
-      const reverse = doMove(move);
-      // get the score for this move
-      const current =
-        level === 1
-          ? // call the evaluator directly
-            evaluate(board)
-          : // descend a level and grab the score
-            loop(level - 1)[1];
-      // undo the move
-      reverse();
-      // check if we got a better score
-      if (
-        (side === BLACK && current > bestScore) ||
-        (side === WHITE && current < bestScore)
-      ) {
-        bestMove = move;
-        bestScore = current;
+    let value = side === BLACK ? -Infinity : +Infinity;
+    let play: MoveType;
+
+    if (level === 0) {
+      value = evaluate(board);
+    } else {
+      // analyze counter-moves from this position
+      for (const move of findMoves()) {
+        // get the score for this move
+        const [current] = loop(level - 1);
+
+        // check if we got a better score
+        if (side === BLACK ? current > value : current < value) {
+          play = move;
+          value = current;
+        }
       }
     }
+
     // the winning move and score for this turn
-    return [bestMove, bestScore] as const;
+    return [value, play] as const;
   }
 }
