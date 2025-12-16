@@ -17,8 +17,6 @@ export function Player() {
       switch (side) {
         case BLACK:
           return moves.some(([qx, qy]) => x === qx && y === qy);
-        case WHITE:
-          return false;
       }
     },
     [side, moves]
@@ -30,18 +28,16 @@ export function Player() {
         case BLACK: {
           const move = moves.find(([qx, qy]) => x === qx && y === qy);
           handlePlay(move);
-          break;
         }
-        case WHITE:
-          break;
       }
     },
     [side, moves, handlePlay]
   );
 
   useEffect(() => {
-    if (side === WHITE) {
-      handleComputerPlay();
+    switch (side) {
+      case WHITE:
+        handleComputerPlay();
     }
   }, [side, handleComputerPlay]);
 

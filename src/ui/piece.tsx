@@ -5,18 +5,19 @@ import type { PieceAtCoords } from './types';
 
 const { EMPTY, BLACK_PIECE } = PieceType;
 
+const transition = {
+  duration: 0.8,
+  times: [0, 0.4, 0.4, 0.8],
+};
+
 const animateBlack = {
-  fill: '#000',
-  rotateY: 0,
+  fill: [null, '#fff', '#000', '#000'],
+  rotateY: [null, 90, 90, 180],
 };
 
 const animateWhite = {
-  fill: '#fff',
-  rotateY: 180,
-};
-
-const duration = {
-  duration: 1,
+  fill: [null, '#000', '#fff', '#fff'],
+  rotateY: [null, 90, 90, 0],
 };
 
 export function Piece({ p }: PieceAtCoords) {
@@ -33,7 +34,7 @@ export function Piece({ p }: PieceAtCoords) {
           r="26"
           initial={false}
           animate={p === BLACK_PIECE ? animateBlack : animateWhite}
-          transition={duration}
+          transition={transition}
         />
       </svg>
     </div>
