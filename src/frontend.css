@@ -1,6 +1,7 @@
 :root {
   --primary: #486;
   --playable: #cb6;
+  --history: #ede6c2;
 }
 
 .game-container {
@@ -57,32 +58,24 @@
     overflow: scroll;
     width: 400px;
 
-    .history {
+    table {
       border-collapse: separate;
       border-spacing: 0;
       width: 100%;
 
       th,
       td {
-        padding: 10px;
+        font-size: 16px;
         text-align: center;
+        padding: 10px;
+        height: 24px;
         width: 50%;
-
-        .thinking {
-          padding: 0;
-
-          span {
-            vertical-align: middle;
-            width: 20px;
-            height: 20px;
-          }
-        }
       }
 
       thead {
         th {
           background-color: var(--primary);
-          color: white;
+          color: #fff;
           position: sticky;
           top: 0px;
         }
@@ -90,7 +83,7 @@
 
       tbody {
         tr td {
-          background-color: var(--secondary);
+          background-color: var(--history);
         }
 
         tr:nth-child(even) td {

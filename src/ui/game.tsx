@@ -6,7 +6,7 @@ import { newBoard } from '../core/utils';
 
 import { GameContext } from './game-context';
 import { Player } from './player';
-// import { History } from './history';
+import { History } from './history';
 
 const { BLACK } = SideType;
 
@@ -67,7 +67,7 @@ export function Game() {
     >
       <div className="game-container">
         <Player />
-        {/* <History /> */}
+        <History />
       </div>
     </GameContext.Provider>
   );
