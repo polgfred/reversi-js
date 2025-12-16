@@ -23,7 +23,7 @@ export function Game() {
   const [, setClock] = useState(0);
 
   // make this play, update the history, and force a re-render
-  const handleMove = useCallback(
+  const handlePlay = useCallback(
     (move: MoveType) => {
       doMove(move);
       hist.push(move);
@@ -41,14 +41,14 @@ export function Game() {
       'message',
       (ev: { data: { move: MoveType } }) => {
         const { move } = ev.data;
-        handleMove(move);
+        handlePlay(move);
       }
     );
 
     return () => {
       worker.current.terminate();
     };
-  }, [handleMove, worker]);
+  }, [handlePlay, worker]);
 
   // ask the worker to compute a move
   const handleComputerPlay = useCallback(() => {
@@ -62,7 +62,7 @@ export function Game() {
         side,
         moves,
         hist,
-        handlePlay: handleMove,
+        handlePlay,
         handleComputerPlay,
       }}
     >

@@ -8,11 +8,9 @@ export function Square({ x, y, children }: Coords & { children: ReactNode }) {
 
   return canPlay({ x, y }) ? (
     <td
+      className="playable"
       onClick={() => {
         doPlay({ x, y });
-      }}
-      style={{
-        cursor: 'pointer',
       }}
     >
       {children}

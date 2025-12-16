@@ -9,7 +9,7 @@ export function HumanPlayer() {
   const { board, moves, handlePlay } = useContext(GameContext);
 
   const canPlay = useCallback(
-    ({ x, y }: Coords) => !!moves.find(([qx, qy]) => x === qx && y === qy),
+    ({ x, y }: Coords) => moves.some(([qx, qy]) => x === qx && y === qy),
     [moves]
   );
 

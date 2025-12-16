@@ -8,8 +8,8 @@
   flex-direction: row;
   justify-content: space-between;
 
-  & .board-container,
-  & .history-container {
+  .board-container,
+  .history-container {
     border: 6px solid #444;
     border-radius: 2px;
     box-shadow: 3px 3px 6px #888;
@@ -18,12 +18,12 @@
     margin: 20px;
   }
 
-  & .board-container {
-    & .board {
+  .board-container {
+    table {
       border-collapse: separate;
       border-spacing: 0;
 
-      & td {
+      td {
         background-color: var(--primary);
         border: 1px solid #000;
         height: 64px;
@@ -32,41 +32,46 @@
         transition: 0.5s;
         width: 64px;
 
-        &.can-play {
-          background-color: var(--playable);
+        &.playable {
+          &:hover {
+            background-color: var(--playable);
+            cursor: pointer;
+          }
         }
 
-        & .piece-container {
+        div {
           height: 60px;
-          left: 2px;
-          position: absolute;
-          top: 2px;
           width: 60px;
+          padding: 2px;
+
+          svg {
+            filter: drop-shadow(3px 3px 2px #0004);
+          }
         }
       }
     }
   }
 
-  & .history-container {
+  .history-container {
     max-height: 512px;
     overflow: scroll;
     width: 400px;
 
-    & .history {
+    .history {
       border-collapse: separate;
       border-spacing: 0;
       width: 100%;
 
-      & th,
-      & td {
+      th,
+      td {
         padding: 10px;
         text-align: center;
         width: 50%;
 
-        &.thinking {
+        .thinking {
           padding: 0;
 
-          & span {
+          span {
             vertical-align: middle;
             width: 20px;
             height: 20px;
@@ -74,8 +79,8 @@
         }
       }
 
-      & thead {
-        & th {
+      thead {
+        th {
           background-color: var(--primary);
           color: white;
           position: sticky;
@@ -83,12 +88,12 @@
         }
       }
 
-      & tbody {
-        & tr td {
+      tbody {
+        tr td {
           background-color: var(--secondary);
         }
 
-        & tr:nth-child(even) td {
+        tr:nth-child(even) td {
           filter: brightness(80%);
         }
       }
