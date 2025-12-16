@@ -1,0 +1,97 @@
+:root {
+  --primary: #486;
+  --playable: #cb6;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  & .board-container,
+  & .history-container {
+    border: 6px solid #444;
+    border-radius: 2px;
+    box-shadow: 3px 3px 6px #888;
+    font-family: sans-serif;
+    font-size: 14px;
+    margin: 20px;
+  }
+
+  & .board-container {
+    & .board {
+      border-collapse: separate;
+      border-spacing: 0;
+
+      & td {
+        background-color: var(--primary);
+        border: 1px solid #000;
+        height: 64px;
+        padding: 0;
+        position: relative;
+        transition: 0.5s;
+        width: 64px;
+
+        &.can-play {
+          background-color: var(--playable);
+        }
+
+        & .piece-container {
+          height: 60px;
+          left: 2px;
+          position: absolute;
+          top: 2px;
+          width: 60px;
+        }
+      }
+    }
+  }
+
+  & .history-container {
+    max-height: 512px;
+    overflow: scroll;
+    width: 400px;
+
+    & .history {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+
+      & th,
+      & td {
+        padding: 10px;
+        text-align: center;
+        width: 50%;
+
+        &.thinking {
+          padding: 0;
+
+          & span {
+            vertical-align: middle;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+
+      & thead {
+        & th {
+          background-color: var(--primary);
+          color: white;
+          position: sticky;
+          top: 0px;
+        }
+      }
+
+      & tbody {
+        & tr td {
+          background-color: var(--secondary);
+        }
+
+        & tr:nth-child(even) td {
+          filter: brightness(80%);
+        }
+      }
+    }
+  }
+}
