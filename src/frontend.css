@@ -76,7 +76,6 @@
         th {
           background-color: var(--primary);
           color: #fff;
-          position: sticky;
           top: 0px;
         }
       }
