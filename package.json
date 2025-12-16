@@ -35,8 +35,6 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "prettier": "^3.7.4",
     "react": "^19.2.3",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.2.3",
     "svgo": "^4.0.0"
   },
