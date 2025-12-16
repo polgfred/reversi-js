@@ -5,8 +5,7 @@ import { makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 
 import { GameContext } from './game-context';
-import { HumanPlayer } from './human-player';
-import { ComputerPlayer } from './computer-player';
+import { Player } from './player';
 // import { History } from './history';
 
 const { BLACK } = SideType;
@@ -67,7 +66,7 @@ export function Game() {
       }}
     >
       <div className="game-container">
-        {side === BLACK ? <HumanPlayer /> : <ComputerPlayer />}
+        <Player />
         {/* <History /> */}
       </div>
     </GameContext.Provider>

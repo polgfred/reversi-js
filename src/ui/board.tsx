@@ -15,7 +15,7 @@ export function Board({ board }: { board: BoardType }) {
             <tr key={y}>
               {COORDS.map((x) => (
                 <Square key={x} x={x} y={y}>
-                  <Piece p={board[y][x]} />
+                  <Piece x={x} y={y} p={board[y][x]} />
                 </Square>
               ))}
             </tr>
