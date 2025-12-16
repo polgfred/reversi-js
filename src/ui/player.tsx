@@ -37,7 +37,7 @@ export function Player() {
   useEffect(() => {
     switch (side) {
       case WHITE:
-        handleComputerPlay();
+        setTimeout(handleComputerPlay, 1000);
     }
   }, [side, handleComputerPlay]);
 
