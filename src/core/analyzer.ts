@@ -34,36 +34,19 @@ export function analyze(
       const source = findMoves();
       for (const move of source) {
         // get the score for this move
-        const [current] = loop(alpha, beta);
+        const [current] = loop(-beta, -alpha);
 
         // check if we got a better score
-        switch (side) {
-          case BLACK:
-            if (current > value) {
-              value = current;
-              play = move;
-            }
-            if (value >= beta) {
-              source.return();
-              break;
-            }
-            if (value > alpha) {
-              alpha = value;
-            }
-            break;
-          case WHITE:
-            if (current < value) {
-              value = current;
-              play = move;
-            }
-            if (value <= alpha) {
-              source.return();
-              break;
-            }
-            if (value < beta) {
-              beta = value;
-            }
-            break;
+        if (side === BLACK ? current > value : current < value) {
+          value = current;
+          play = move;
+        }
+        if (value >= beta) {
+          source.return();
+          break;
+        }
+        if (value > alpha) {
+          alpha = value;
         }
       }
 
