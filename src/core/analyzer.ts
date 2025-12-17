@@ -5,7 +5,7 @@ import { evaluate } from './evaluator';
 const { BLACK, WHITE } = SideType;
 
 // how many levels deep to search the tree
-const LEVEL = 10;
+const LEVEL = 8;
 
 export function analyze(
   board: BoardType,
