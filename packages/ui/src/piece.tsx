@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 
-import { PieceType } from '../core/types';
+import { PieceType } from '@reversi/core';
+
 import type { PieceAtCoords } from './types';
 
 const { EMPTY, BLACK_PIECE } = PieceType;

@@ -1,5 +1,6 @@
 import { createContext } from 'react';
-import type { BoardType, MoveType, SideType } from '../core/types';
+
+import type { BoardType, MoveType, SideType } from '@reversi/core';
 
 export interface GameContextType {
   board: BoardType;

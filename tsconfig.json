@@ -1,16 +1,8 @@
 {
-  "compilerOptions": {
-    "outDir": "./lib/",
-    "noImplicitAny": true,
-    "jsx": "react-jsx",
-    "target": "esnext",
-    "allowJs": true,
-    "esModuleInterop": true,
-    "module": "preserve",
-    "moduleResolution": "bundler",
-    "sourceMap": true,
-    "lib": ["es2020", "dom"]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules/**/*"]
+  "files": [],
+  "references": [
+    { "path": "./apps/web/tsconfig.json" },
+    { "path": "./packages/core/tsconfig.json" },
+    { "path": "./packages/ui/tsconfig.json" }
+  ]
 }

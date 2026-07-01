@@ -1,4 +1,5 @@
-import { MoveType, BoardType, SideType, PieceType } from './types';
+import type { MoveType, BoardType } from './types';
+import { SideType, PieceType } from './types';
 
 type Mutable<T> = { -readonly [K in keyof T]: T[K] };
 

@@ -1,4 +1,4 @@
-import type { PieceType } from '../core/types';
+import type { PieceType } from '@reversi/core';
 
 export interface Coords {
   x: number;

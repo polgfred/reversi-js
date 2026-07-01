@@ -1,8 +1,9 @@
-import { MoveType, BoardType, SideType } from './types';
-import { makeRules } from './rules';
 import { evaluate } from './evaluator';
+import { makeRules } from './rules';
+import type { MoveType, BoardType } from './types';
+import { SideType } from './types';
 
-const { BLACK, WHITE } = SideType;
+const { BLACK } = SideType;
 
 // how many levels deep to search the tree
 const LEVEL = 8;

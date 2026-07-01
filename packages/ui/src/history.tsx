@@ -1,6 +1,7 @@
 import { createRef, useCallback, useContext, useLayoutEffect } from 'react';
 
-import type { MoveType } from '../core/types';
+import type { MoveType } from '@reversi/core';
+
 import { GameContext } from './game-context';
 import { ThinkingSpinner } from './thinking';
 

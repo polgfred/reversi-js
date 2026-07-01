@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect } from 'react';
 
-import { SideType } from '../core/types';
+import { SideType } from '@reversi/core';
+
 import { Board } from './board';
 import { GameContext } from './game-context';
 import { PlayerContext } from './player-context';

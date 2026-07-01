@@ -1,11 +1,21 @@
 {
-  "name": "reversi-js",
+  "name": "reversi-workspace",
   "version": "2.0.0",
+  "private": true,
   "type": "module",
   "description": "Reversi (Othello) in JavaScript",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "format": "prettier --write ./src/**/*.ts",
-    "lint": "eslint ./src/**/*.ts"
+    "dev": "npm run dev -w @reversi/web",
+    "dev:web": "npm run dev -w @reversi/web",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -18,7 +28,6 @@
     "@types/node": "^26.0.1",
     "@typescript-eslint/eslint-plugin": "^8.62.1",
     "@typescript-eslint/parser": "^8.62.1",
-    "@preact/preset-vite": "^2.10.5",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.5",
@@ -27,8 +36,6 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.7.0",
-    "motion": "^12.42.2",
-    "preact": "^10.29.3",
     "prettier": "^3.9.4",
     "typescript": "^6.0.3",
     "vite": "^8.1.2",

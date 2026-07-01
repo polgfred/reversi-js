@@ -1,4 +1,5 @@
-import { BoardType, PieceType } from './types';
+import type { BoardType } from './types';
+import { PieceType } from './types';
 
 const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 

@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { PlayerContext } from './player-context';
 import type { Coords } from './types';

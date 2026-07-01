@@ -1,16 +1,26 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-import { type MoveType, SideType } from '../core/types';
-import { makeRules } from '../core/rules';
-import { newBoard } from '../core/utils';
+import {
+  type BoardType,
+  type MoveType,
+  SideType,
+  makeRules,
+  newBoard,
+} from '@reversi/core';
 
 import { GameContext } from './game-context';
-import { Player } from './player';
 import { History } from './history';
+import { Player } from './player';
 
 const { BLACK } = SideType;
 
-export function Game() {
+export type GetMove = (board: BoardType, side: SideType) => Promise<MoveType>;
+
+export interface GameProps {
+  getMove: GetMove;
+}
+
+export function Game({ getMove }: GameProps) {
   const [{ getBoard, getSide, findMoves, doMove }] = useState(() =>
     makeRules(newBoard(), BLACK)
   );
@@ -31,28 +41,10 @@ export function Game() {
     [doMove, hist]
   );
 
-  // set up the web worker for computer moves
-  const worker = useRef<Worker | null>(null);
-
-  useEffect(() => {
-    worker.current = new Worker('./worker.js');
-    worker.current.addEventListener(
-      'message',
-      (ev: { data: { move: MoveType } }) => {
-        const { move } = ev.data;
-        handlePlay(move);
-      }
-    );
-
-    return () => {
-      worker.current.terminate();
-    };
-  }, [handlePlay, worker]);
-
-  // ask the worker to compute a move
+  // ask the host to compute a move (delegated to a web worker), then play it
   const handleComputerPlay = useCallback(() => {
-    worker.current.postMessage({ board, side });
-  }, [worker, board, side]);
+    getMove(board, side).then(handlePlay);
+  }, [getMove, board, side, handlePlay]);
 
   return (
     <GameContext.Provider
