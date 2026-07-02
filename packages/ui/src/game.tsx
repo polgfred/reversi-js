@@ -93,6 +93,20 @@ export function Game({ getMove }: GameProps) {
     [getPlay, handlePlay]
   );
 
+  useEffect(() => {
+    // @ts-expect-error window object
+    window.DEBUG = () => {
+      const block = board
+        .map(
+          (row) =>
+            `  [${row.map((p) => (p === 0 ? '_' : p === 1 ? 'X' : 'O')).join(', ')}],`
+        )
+        .join('\n');
+      // eslint-disable-next-line no-console
+      console.log(`const board = [\n${block}\n] as BoardType;\n`);
+    };
+  }, [board]);
+
   return (
     <GameContext.Provider
       value={{ board, side, moves, hist, canPlay, handleClick }}
