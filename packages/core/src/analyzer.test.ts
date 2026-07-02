@@ -11,8 +11,7 @@ describe('Analyzer', () => {
     const board = newBoard();
     const [score, move] = analyze(board, BLACK, 1);
 
-    // brittle
-    expect(score).toEqual(40);
+    expect(score).toEqual(0);
     expect(move).toEqual([4, 2, 0, 0, 0, 0, 0, 0, 1, 0]);
     // this checks that the board was put back correctly
     expect(board).toEqual(newBoard());

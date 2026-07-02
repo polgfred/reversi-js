@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { evaluate } from './evaluator';
+import { makeEvaluator } from './evaluator';
 import { PieceType } from './types';
 import { copyBoard, newBoard } from './utils';
 
@@ -9,6 +9,8 @@ const X = PieceType.BLACK_PIECE;
 const _ = PieceType.EMPTY;
 
 describe('evaluator', () => {
+  const evaluate = makeEvaluator();
+
   it('scores initial position', () => {
     const board = newBoard();
     const score = evaluate(board);
