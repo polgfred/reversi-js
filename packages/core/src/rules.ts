@@ -13,6 +13,9 @@ export interface Rules {
   readonly getSide: () => SideType;
   readonly findMoves: () => MoveGenerator;
   readonly doMove: (move: MoveType) => void;
+  readonly pass: () => void;
+  // [black, white] piece counts — decides the winner at game over
+  readonly getCounts: () => readonly [number, number];
 }
 
 export function makeRules(board: BoardType, side: SideType): Rules {
@@ -167,10 +170,31 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     switchSides();
   }
 
+  function getCounts() {
+    let cb = 0;
+    let cw = 0;
+
+    // loop through the squares
+    for (let y = 0; (y & ~7) === 0; ++y) {
+      for (let x = 0; (x & ~7) === 0; ++x) {
+        const p = board[y][x];
+        if (p === BLACK_PIECE) {
+          cb++;
+        } else if (p === WHITE_PIECE) {
+          cw++;
+        }
+      }
+    }
+
+    return [cb, cw] as const;
+  }
+
   return {
     getBoard: () => board,
     getSide: () => side,
     findMoves,
     doMove,
+    pass: switchSides,
+    getCounts,
   };
 }

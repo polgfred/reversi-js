@@ -1,9 +1,6 @@
 import { evaluate } from './evaluator';
 import { makeRules } from './rules';
-import type { MoveType, BoardType } from './types';
-import { SideType } from './types';
-
-const { BLACK } = SideType;
+import type { MoveType, BoardType, SideType } from './types';
 
 // how many levels deep to search the tree
 const LEVEL = 8;
@@ -12,46 +9,82 @@ export function analyze(
   board: BoardType,
   side: SideType,
   level = LEVEL
-): readonly [number, MoveType] {
+): readonly [number, MoveType | undefined] {
   // get the rules
-  const { getSide, findMoves } = makeRules(board, side);
+  const { getSide, findMoves, pass, getCounts } = makeRules(board, side);
 
   return loop(-Infinity, +Infinity);
 
-  // recursive traversal of the game tree
-  function loop(alpha: number, beta: number) {
+  // does the side to move have at least one legal move?
+  function hasMove() {
+    const source = findMoves();
+    const { done } = source.next();
+    // advancing applied a move (and flipped sides); undo it
+    source.return();
+    return !done;
+  }
+
+  // negamax with alpha-beta: every node maximizes its own score, and a child's
+  // score (from the opponent's perspective) is negated to bring it into ours.
+  function loop(
+    alpha: number,
+    beta: number
+  ): readonly [number, MoveType | undefined] {
     const side = getSide();
 
-    // keep track of best move and score so far
-    let value = side === BLACK ? -Infinity : +Infinity;
-    let play: MoveType;
-
+    // leaf node: score the position from the side-to-move's perspective
+    // (SideType is +1 for black, -1 for white, and evaluate() is black-positive)
     if (level === 0) {
-      value = evaluate(board);
-    } else {
-      level--;
+      return [side * evaluate(board), undefined] as const;
+    }
 
-      // analyze counter-moves from this position
-      const source = findMoves();
-      for (const move of source) {
-        // get the score for this move
-        const [current] = loop(-beta, -alpha);
+    // best move and score so far
+    let value = -Infinity;
+    let play: MoveType | undefined;
 
-        // check if we got a better score
-        if (side === BLACK ? current > value : current < value) {
-          value = current;
-          play = move;
-        }
-        if (value >= beta) {
-          source.return();
-          break;
-        }
-        if (value > alpha) {
-          alpha = value;
-        }
+    level--;
+
+    // analyze counter-moves from this position
+    const source = findMoves();
+    let moved = false;
+    for (const move of source) {
+      moved = true;
+
+      // score this move (negate the opponent's point of view)
+      const current = -loop(-beta, -alpha)[0];
+
+      // record the first move unconditionally, then only on improvement — so a
+      // node with moves always yields a `play`, even if scores are infinite
+      if (play === undefined || current > value) {
+        value = current;
+        play = move;
       }
+      if (value >= beta) {
+        source.return();
+        break;
+      }
+      if (value > alpha) {
+        alpha = value;
+      }
+    }
 
-      level++;
+    level++;
+
+    // no legal move: this is a pass, not a loss. hand the turn to the opponent
+    // and search their reply; if they can't move either, the game is over and
+    // the winner is decided by piece count. `play` stays undefined (a pass).
+    if (!moved) {
+      pass();
+      try {
+        if (hasMove()) {
+          value = -loop(-beta, -alpha)[0];
+        } else {
+          const [cb, cw] = getCounts();
+          value = cb === cw ? 0 : side * (cb > cw ? +Infinity : -Infinity);
+        }
+      } finally {
+        pass();
+      }
     }
 
     // the winning move and score for this turn
