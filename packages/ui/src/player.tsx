@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect } from 'react';
 
-import { SideType } from '@reversi/core';
+import { SideType, makeRules, copyBoard, type BoardType } from '@reversi/core';
 
 import { Board } from './board';
 import { GameContext } from './game-context';
@@ -9,8 +9,14 @@ import type { Coords } from './types';
 
 const { BLACK, WHITE } = SideType;
 
+// does `side` have any legal move on this board? (checked on a copy so the
+// live game state is never disturbed)
+function hasAnyMove(board: BoardType, side: SideType) {
+  return !makeRules(copyBoard(board), side).findMoves().next().done;
+}
+
 export function Player() {
-  const { board, side, moves, handlePlay, handleComputerPlay } =
+  const { board, side, moves, handlePlay, handlePass, handleComputerPlay } =
     useContext(GameContext);
 
   const canPlay = useCallback(
@@ -36,11 +42,23 @@ export function Player() {
   );
 
   useEffect(() => {
-    switch (side) {
-      case WHITE:
-        setTimeout(handleComputerPlay, 1000);
+    // the side to move has no legal play: pass to the opponent, unless they
+    // are also stuck — in which case the game is over and we leave the board.
+    if (moves.length === 0) {
+      const opponent = side === BLACK ? WHITE : BLACK;
+      if (hasAnyMove(board, opponent)) {
+        const timer = setTimeout(handlePass, 600);
+        return () => clearTimeout(timer);
+      }
+      return;
     }
-  }, [side, handleComputerPlay]);
+
+    // the computer plays white
+    if (side === WHITE) {
+      const timer = setTimeout(handleComputerPlay, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [side, moves, board, handlePass, handleComputerPlay]);
 
   return (
     <PlayerContext.Provider value={{ canPlay, doPlay }}>

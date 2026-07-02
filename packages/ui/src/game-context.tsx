@@ -8,6 +8,7 @@ export interface GameContextType {
   moves: readonly MoveType[];
   hist: readonly MoveType[];
   handlePlay(move: MoveType): void;
+  handlePass(): void;
   handleComputerPlay(): void;
 }
 

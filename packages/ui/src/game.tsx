@@ -15,14 +15,17 @@ import styles from './styles.module.css';
 
 const { BLACK } = SideType;
 
-export type GetMove = (board: BoardType, side: SideType) => Promise<MoveType>;
+export type GetMove = (
+  board: BoardType,
+  side: SideType
+) => Promise<MoveType | null>;
 
 export interface GameProps {
   getMove: GetMove;
 }
 
 export function Game({ getMove }: GameProps) {
-  const [{ getBoard, getSide, findMoves, doMove }] = useState(() =>
+  const [{ getBoard, getSide, findMoves, doMove, pass }] = useState(() =>
     makeRules(newBoard(), BLACK)
   );
 
@@ -42,10 +45,23 @@ export function Game({ getMove }: GameProps) {
     [doMove, hist]
   );
 
-  // ask the host to compute a move (delegated to a web worker), then play it
+  // no legal move: hand the turn to the opponent without playing a piece
+  const handlePass = useCallback(() => {
+    pass();
+    setClock(Date.now());
+  }, [pass]);
+
+  // ask the host to compute a move (delegated to a web worker), then play it.
+  // a null move means the search found no legal play here, so we pass instead.
   const handleComputerPlay = useCallback(() => {
-    getMove(board, side).then(handlePlay);
-  }, [getMove, board, side, handlePlay]);
+    getMove(board, side).then((move) => {
+      if (move) {
+        handlePlay(move);
+      } else {
+        handlePass();
+      }
+    });
+  }, [getMove, board, side, handlePlay, handlePass]);
 
   return (
     <GameContext.Provider
@@ -55,6 +71,7 @@ export function Game({ getMove }: GameProps) {
         moves,
         hist,
         handlePlay,
+        handlePass,
         handleComputerPlay,
       }}
     >

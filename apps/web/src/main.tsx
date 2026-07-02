@@ -16,7 +16,7 @@ import './app.css';
 type Root = ReturnType<typeof createRoot>;
 
 type WorkerResponse = {
-  move: MoveType;
+  move: MoveType | null;
 };
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url), {
@@ -24,7 +24,7 @@ const worker = new Worker(new URL('./worker.ts', import.meta.url), {
 });
 
 function getMove(board: BoardType, side: SideType) {
-  return new Promise<MoveType>((resolve) => {
+  return new Promise<MoveType | null>((resolve) => {
     worker.onmessage = (ev: MessageEvent<WorkerResponse>) => {
       resolve(ev.data.move);
       worker.onmessage = null;

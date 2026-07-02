@@ -9,7 +9,8 @@ self.addEventListener(
   (ev: MessageEvent<{ board: BoardType; side: SideType }>) => {
     const { board, side } = ev.data;
     const [, move] = analyze(board, side);
-    self.postMessage({ move });
+    // undefined means "no legal move here" (a pass); send null across the wire
+    self.postMessage({ move: move ?? null });
   },
   false
 );
