@@ -40,13 +40,43 @@
           }
         }
 
-        div {
+        .piece {
           height: 60px;
           width: 60px;
           padding: 2px;
+          perspective: 300px;
 
-          svg {
+          .piece-coin {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1s;
+
+            &.black {
+              transform: rotateY(0deg);
+            }
+
+            &.white {
+              transform: rotateY(180deg);
+            }
+          }
+
+          .piece-face {
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            backface-visibility: hidden;
             filter: drop-shadow(3px 3px 2px #0004);
+
+            &.black {
+              background-color: #000;
+            }
+
+            &.white {
+              background-color: #fff;
+              transform: rotateY(180deg);
+            }
           }
         }
       }
