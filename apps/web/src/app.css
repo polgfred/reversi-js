@@ -1,5 +1,43 @@
 :root {
+  /* board — classic Othello green, kept for instant recognizability */
   --primary: #486;
+  --board-frame-start: #33443a;
+  --board-frame-end: #26352c;
+  --grid-line: rgb(0 0 0 / 40%);
   --playable: #cb6;
+  --playable-dot: rgb(18 28 22 / 30%);
+
+  /* panels */
+  --panel-cream: #f3ecd6;
+  --panel-cream-muted: #e7dcbf;
   --history: #ede6c2;
+  --panel-border: #26352c;
+  --row-hover: #efe6c8;
+
+  /* history header */
+  --header-start: #4a8a68;
+  --header-end: #2f6b4f;
+
+  /* text */
+  --text-on-dark: #f7f3e7;
+  --text-primary: #22302a;
+
+  /* app background */
+  --app-bg-start: #edefe8;
+  --app-bg-end: #d9e0d7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(
+    circle at 25% 15%,
+    var(--app-bg-start) 0%,
+    var(--app-bg-end) 100%
+  );
+  font-family: 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
 }
