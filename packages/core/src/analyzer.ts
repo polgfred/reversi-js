@@ -5,6 +5,10 @@ import type { MoveType, BoardType, SideType } from './types';
 // how many levels deep to search the tree
 const LEVEL = 8;
 
+// terminal (win/loss) scores live in a finite band near ±MATE so that ply
+// distance can be folded in: shorter wins score better.
+export const MATE = 1 << 20;
+
 export function analyze(
   board: BoardType,
   side: SideType,
@@ -13,13 +17,15 @@ export function analyze(
   // get the rules
   const { getSide, findMoves, pass, getCounts } = makeRules(board, side);
 
+  // remaining depth at the root, to measure how far a terminal is from here
+  const rootLevel = level;
+
   return loop(-Infinity, +Infinity);
 
   // does the side to move have at least one legal move?
   function hasMove() {
     const source = findMoves();
     const { done } = source.next();
-    // advancing applied a move (and flipped sides); undo it
     source.return();
     return !done;
   }
@@ -80,7 +86,13 @@ export function analyze(
           value = -loop(-beta, -alpha)[0];
         } else {
           const [cb, cw] = getCounts();
-          value = cb === cw ? 0 : side * (cb > cw ? +Infinity : -Infinity);
+          if (cb === cw) {
+            value = 0;
+          } else {
+            // encode ply distance so shorter wins / longer losses score better
+            const distance = rootLevel - level;
+            value = side * (cb > cw ? 1 : -1) * (MATE - distance);
+          }
         }
       } finally {
         pass();

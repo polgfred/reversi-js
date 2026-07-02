@@ -14,7 +14,6 @@ export interface Rules {
   readonly findMoves: () => MoveGenerator;
   readonly doMove: (move: MoveType) => void;
   readonly pass: () => void;
-  // [black, white] piece counts — decides the winner at game over
   readonly getCounts: () => readonly [number, number];
 }
 
