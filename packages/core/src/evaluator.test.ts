@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeEvaluator } from './evaluator';
-import { PieceType } from './types';
-import { copyBoard, newBoard } from './utils';
+import { type BoardType, PieceType } from './types';
+import { newBoard } from './utils';
 
 const O = PieceType.WHITE_PIECE;
 const X = PieceType.BLACK_PIECE;
@@ -17,8 +17,7 @@ describe('evaluator', () => {
     expect(score).toBe(0);
   });
 
-  // // prettier-ignore
-  // const board = copyBoard([
+  // const board = [
   //   [ _, _, _, _, _, _, _, _ ],
   //   [ _, _, _, _, _, _, _, _ ],
   //   [ _, _, _, _, _, _, _, _ ],
@@ -27,20 +26,19 @@ describe('evaluator', () => {
   //   [ _, _, _, _, _, _, _, _ ],
   //   [ _, _, _, _, _, _, _, _ ],
   //   [ _, _, _, _, _, _, _, _ ],
-  // ]);
+  // ] as BoardType;
 
   it('scores a midgame position', () => {
-    // prettier-ignore
-    const board = copyBoard([
-      [ _, _, X, _, X, _, _, _ ],
-      [ _, _, O, O, X, X, _, _ ],
-      [ _, X, X, O, X, _, _, _ ],
-      [ _, _, O, O, O, _, _, _ ],
-      [ X, X, O, _, _, _, _, _ ],
-      [ _, _, _, _, _, _, _, _ ],
-      [ _, _, _, _, _, _, _, _ ],
-      [ _, _, _, _, _, _, _, _ ],
-    ]);
+    const board = [
+      [_, _, X, _, X, _, _, _],
+      [_, _, O, O, X, X, _, _],
+      [_, X, X, O, X, _, _, _],
+      [_, _, O, O, O, _, _, _],
+      [X, X, O, _, _, _, _, _],
+      [_, _, _, _, _, _, _, _],
+      [_, _, _, _, _, _, _, _],
+      [_, _, _, _, _, _, _, _],
+    ] as BoardType;
     const score = evaluate(board);
     expect(score).toBeGreaterThan(0);
   });

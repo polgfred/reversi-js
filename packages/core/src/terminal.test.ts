@@ -43,16 +43,15 @@ describe('terminal / no-move handling', () => {
   it('a move that wins the game one ply out scores MATE - 1', () => {
     // one empty square; black plays [7,0], flanking the O-row against the X at
     // [0,0], filling the board all-black => black wins one ply from here.
-    // prettier-ignore
     const board = [
-      [ X, O, O, O, O, O, O, _ ],
-      [ X, X, X, X, X, X, X, X ],
-      [ X, X, X, X, X, X, X, X ],
-      [ X, X, X, X, X, X, X, X ],
-      [ X, X, X, X, X, X, X, X ],
-      [ X, X, X, X, X, X, X, X ],
-      [ X, X, X, X, X, X, X, X ],
-      [ X, X, X, X, X, X, X, X ],
+      [X, O, O, O, O, O, O, _],
+      [X, X, X, X, X, X, X, X],
+      [X, X, X, X, X, X, X, X],
+      [X, X, X, X, X, X, X, X],
+      [X, X, X, X, X, X, X, X],
+      [X, X, X, X, X, X, X, X],
+      [X, X, X, X, X, X, X, X],
+      [X, X, X, X, X, X, X, X],
     ] as BoardType;
 
     const [score, move] = analyze(board, BLACK);
