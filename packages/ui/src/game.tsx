@@ -11,6 +11,7 @@ import {
 import { GameContext } from './game-context';
 import { History } from './history';
 import { Player } from './player';
+import styles from './styles.module.css';
 
 const { BLACK } = SideType;
 
@@ -57,7 +58,7 @@ export function Game({ getMove }: GameProps) {
         handleComputerPlay,
       }}
     >
-      <div className="game-container">
+      <div className={styles.gameContainer}>
         <Player />
         <History />
       </div>

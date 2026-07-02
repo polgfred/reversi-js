@@ -1,11 +1,13 @@
 import { PieceType, type BoardType } from '@reversi/core';
 
+import boardStyles from './board.module.css';
 import { Piece } from './piece';
 import { Square } from './square';
+import styles from './styles.module.css';
 
 export function Board({ board }: { board: BoardType }) {
   return (
-    <div className="board-container">
+    <div className={`${styles.panelSurface} ${boardStyles.boardContainer}`}>
       <table>
         <tbody>
           {board

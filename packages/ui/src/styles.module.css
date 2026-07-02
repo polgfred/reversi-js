@@ -1,0 +1,49 @@
+.gameContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.panelSurface {
+  border: 6px solid #444;
+  border-radius: 2px;
+  box-shadow: 3px 3px 6px #888;
+  font-family: sans-serif;
+  font-size: 14px;
+  margin: 20px;
+}
+
+.historyContainer {
+  max-height: 512px;
+  overflow: scroll;
+  width: 400px;
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+  }
+
+  th,
+  td {
+    font-size: 16px;
+    text-align: center;
+    padding: 10px;
+    height: 24px;
+    width: 50%;
+  }
+
+  thead th {
+    background-color: var(--primary);
+    color: #fff;
+    top: 0px;
+  }
+
+  tbody tr td {
+    background-color: var(--history);
+  }
+
+  tbody tr:nth-child(even) td {
+    filter: brightness(80%);
+  }
+}

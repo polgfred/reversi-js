@@ -1,5 +1,6 @@
 import { type ReactNode, useContext } from 'react';
 
+import styles from './board.module.css';
 import { PlayerContext } from './player-context';
 import type { Coords } from './types';
 
@@ -8,7 +9,7 @@ export function Square({ x, y, children }: Coords & { children: ReactNode }) {
 
   return canPlay({ x, y }) ? (
     <td
-      className="playable"
+      className={styles.playable}
       onClick={() => {
         doPlay({ x, y });
       }}

@@ -3,6 +3,7 @@ import { createRef, useCallback, useContext, useLayoutEffect } from 'react';
 import type { MoveType } from '@reversi/core';
 
 import { GameContext } from './game-context';
+import styles from './styles.module.css';
 import { ThinkingSpinner } from './thinking';
 
 const xValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -34,7 +35,10 @@ export function History() {
   );
 
   return (
-    <div ref={ref} className="history-container">
+    <div
+      ref={ref}
+      className={`${styles.panelSurface} ${styles.historyContainer}`}
+    >
       <table>
         <thead>
           <tr>
