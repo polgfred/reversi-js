@@ -21,7 +21,7 @@ const evaluate = makeEvaluator();
 self.addEventListener(
   'message',
   (ev: MessageEvent<MessageType>) => {
-    const { board, side, level } = ev.data;
+    const { board, side, level = 6 } = ev.data;
     const board2 = copyBoard(board);
     // re-pack arrays after structured clone
     const [, move] = analyze(board2, side, level, evaluate);
