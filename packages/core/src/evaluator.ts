@@ -1,5 +1,6 @@
-import { type BoardType, PieceType } from './types';
+import { type BoardType, PieceType, SideType } from './types';
 
+const { BLACK, WHITE } = SideType;
 const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 
 const CLOSED = 0x01;
@@ -8,7 +9,6 @@ const EDGE = 0x04;
 
 export function evaluate(board: BoardType) {
   const state = [0, 0, 0, 0, 0, 0, 0, 0];
-  let total = 0;
 
   function score(x: number, y: number) {
     const p = board[y][x];
@@ -85,10 +85,48 @@ export function evaluate(board: BoardType) {
     return risk > 0 ? -risk : safe;
   }
 
+  function canMove(x: number, y: number, side: SideType) {
+    for (let dy = -1; dy <= +1; ++dy) {
+      for (let dx = -1; dx <= +1; ++dx) {
+        if (dx === 0 && dy === 0) {
+          continue;
+        }
+
+        let nx = x;
+        let ny = y;
+        for (let count = 0; ; ++count) {
+          nx += dx;
+          ny += dy;
+
+          if (((nx | ny) & ~7) !== 0) {
+            break;
+          }
+
+          const np = board[ny][nx];
+          if (np === EMPTY) {
+            break;
+          } else if (np === side) {
+            if (count > 0) return true;
+            break;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  let total = 0;
+  let cblack = 0;
+  let cwhite = 0;
   for (let y = 0; (y & ~7) === 0; ++y) {
     for (let x = 0; (x & ~7) === 0; ++x) {
       const p = board[y][x];
       switch (p) {
+        case EMPTY:
+          if (canMove(x, y, BLACK)) cblack++;
+          if (canMove(x, y, WHITE)) cwhite++;
+          break;
         case BLACK_PIECE:
           total += score(x, y);
           break;
@@ -99,5 +137,5 @@ export function evaluate(board: BoardType) {
     }
   }
 
-  return total;
+  return total + 5 * (cblack - cwhite);
 }
