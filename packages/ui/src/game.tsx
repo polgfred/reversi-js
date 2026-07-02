@@ -21,9 +21,39 @@ export interface GameProps {
   getMove: GetMove;
 }
 
+function GameOverOverlay({
+  counts,
+  onPlayAgain,
+}: {
+  counts: readonly [number, number];
+  onPlayAgain: () => void;
+}) {
+  const [black, white] = counts;
+  const title =
+    black > white
+      ? 'Black wins!'
+      : white > black
+        ? 'White wins!'
+        : "It's a tie!";
+
+  return (
+    <div className={styles.gameOverOverlay}>
+      <div className={styles.gameOverPanel}>
+        <h2 className={styles.gameOverTitle}>{title}</h2>
+        <p className={styles.gameOverScore}>
+          {black} &ndash; {white}
+        </p>
+        <button className={styles.playAgainButton} onClick={onPlayAgain}>
+          Play Again
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function Game({ getMove }: GameProps) {
-  const { snapshot, handlePlay, handlePass } = useGameStore();
-  const { board, side, moves, gameOver, hist } = snapshot;
+  const { snapshot, handlePlay, handlePass, startGame } = useGameStore();
+  const { board, side, moves, gameOver, counts, hist } = snapshot;
   const { canPlay, getPlay } = usePlayer(snapshot);
 
   // drive the turn: pass when stuck, otherwise let the computer play white
@@ -70,6 +100,9 @@ export function Game({ getMove }: GameProps) {
       <div className={styles.gameContainer}>
         <Board board={board} />
         <History />
+        {gameOver && (
+          <GameOverOverlay counts={counts} onPlayAgain={startGame} />
+        )}
       </div>
     </GameContext.Provider>
   );

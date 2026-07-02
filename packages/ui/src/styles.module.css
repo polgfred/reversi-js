@@ -8,6 +8,72 @@
   margin: 0 auto;
   max-width: 1100px;
   padding: 28px 20px;
+  position: relative;
+}
+
+.gameOverOverlay {
+  align-items: center;
+  animation: overlay-in 200ms ease-out both;
+  background: rgb(20 30 24 / 45%);
+  border-radius: 10px;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+  z-index: 10;
+}
+
+.gameOverPanel {
+  background: rgb(243 236 214 / 97%);
+  border: 3px solid var(--panel-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 34px rgb(20 30 24 / 35%);
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  padding: 26px 32px;
+  text-align: center;
+}
+
+.gameOverTitle {
+  color: var(--text-primary);
+  font-size: 24px;
+  margin: 0 0 4px;
+}
+
+.gameOverScore {
+  color: var(--text-primary);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  margin: 0 0 18px;
+  opacity: 0.75;
+}
+
+.playAgainButton {
+  background: linear-gradient(
+    135deg,
+    var(--header-start) 0%,
+    var(--header-end) 100%
+  );
+  border: 0;
+  border-radius: 8px;
+  color: var(--text-on-dark);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 20px;
+}
+
+.playAgainButton:hover {
+  filter: brightness(1.06);
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .panelSurface {
@@ -26,7 +92,7 @@
     var(--panel-cream-muted) 100%
   );
   font-size: 14px;
-  max-height: 532px;
+  max-height: 542px;
   overflow-y: auto;
   width: min(360px, 100%);
 

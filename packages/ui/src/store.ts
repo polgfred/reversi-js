@@ -19,6 +19,7 @@ export type GameSnapshot = {
   board: BoardType;
   side: SideType;
   moves: readonly MoveType[];
+  counts: readonly [number, number];
   gameOver: boolean;
   hist: History;
 };
@@ -55,6 +56,7 @@ function createGameStore(): GameStore {
       board: rules.getBoard(),
       side: rules.getSide(),
       moves,
+      counts: rules.getCounts(),
       gameOver,
       hist: hist.map((row) => [row[0], row[1]]),
     };
