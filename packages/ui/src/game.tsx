@@ -1,19 +1,14 @@
-import { useCallback, useState } from 'react';
+import { useEffect } from 'react';
 
-import {
-  type BoardType,
-  type MoveType,
-  SideType,
-  makeRules,
-  newBoard,
-} from '@reversi/core';
+import { type BoardType, type MoveType, SideType } from '@reversi/core';
 
 import { GameContext } from './game-context';
 import { History } from './history';
 import { Player } from './player';
+import { useGameStore } from './store';
 import styles from './styles.module.css';
 
-const { BLACK } = SideType;
+const { WHITE } = SideType;
 
 export type GetMove = (
   board: BoardType,
@@ -25,56 +20,37 @@ export interface GameProps {
 }
 
 export function Game({ getMove }: GameProps) {
-  const [{ getBoard, getSide, findMoves, doMove, pass }] = useState(() =>
-    makeRules(newBoard(), BLACK)
-  );
+  const { snapshot, handlePlay, handlePass } = useGameStore();
+  const { board, side, moves, gameOver, hist } = snapshot;
 
-  const board = getBoard();
-  const side = getSide();
-  const moves = [...findMoves()];
-  const [hist] = useState([] as MoveType[]);
-  const [, setClock] = useState(0);
+  // drive the turn: pass when stuck, otherwise let the computer play white
+  useEffect(() => {
+    if (gameOver) {
+      return;
+    }
 
-  // make this play, update the history, and force a re-render
-  const handlePlay = useCallback(
-    (move: MoveType) => {
-      doMove(move);
-      hist.push(move);
-      setClock(Date.now());
-    },
-    [doMove, hist]
-  );
+    // the side to move is stuck but the game isn't over, so pass
+    if (moves.length === 0) {
+      const timer = setTimeout(handlePass, 600);
+      return () => clearTimeout(timer);
+    }
 
-  // no legal move: hand the turn to the opponent without playing a piece
-  const handlePass = useCallback(() => {
-    pass();
-    setClock(Date.now());
-  }, [pass]);
-
-  // ask the host to compute a move (delegated to a web worker), then play it.
-  // a null move means the search found no legal play here, so we pass instead.
-  const handleComputerPlay = useCallback(() => {
-    getMove(board, side).then((move) => {
-      if (move) {
-        handlePlay(move);
-      } else {
-        handlePass();
-      }
-    });
-  }, [getMove, board, side, handlePlay, handlePass]);
+    if (side === WHITE) {
+      const timer = setTimeout(() => {
+        getMove(board, side).then((move) => {
+          if (move) {
+            handlePlay(move);
+          } else {
+            handlePass();
+          }
+        });
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [board, side, moves, gameOver, getMove, handlePlay, handlePass]);
 
   return (
-    <GameContext.Provider
-      value={{
-        board,
-        side,
-        moves,
-        hist,
-        handlePlay,
-        handlePass,
-        handleComputerPlay,
-      }}
-    >
+    <GameContext.Provider value={{ board, side, moves, hist, handlePlay }}>
       <div className={styles.gameContainer}>
         <Player />
         <History />
