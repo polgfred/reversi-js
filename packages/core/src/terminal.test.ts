@@ -53,7 +53,7 @@ describe('terminal / no-move handling', () => {
       [ X, X, X, X, X, X, X, X ],
       [ X, X, X, X, X, X, X, X ],
       [ X, X, X, X, X, X, X, X ],
-    ] as unknown as BoardType;
+    ] as BoardType;
 
     const [score, move] = analyze(board, BLACK);
     expect(move?.[0]).toBe(7); // x

@@ -1,4 +1,4 @@
-import { evaluate } from './evaluator';
+import { makeEvaluator } from './evaluator';
 import { makeRules } from './rules';
 import type { MoveType, BoardType, SideType } from './types';
 
@@ -12,7 +12,8 @@ export const MATE = 1 << 20;
 export function analyze(
   board: BoardType,
   side: SideType,
-  level = LEVEL
+  level = LEVEL,
+  evaluate = makeEvaluator()
 ): readonly [number, MoveType | undefined] {
   // get the rules
   const { getSide, findMoves, pass, getCounts } = makeRules(board, side);

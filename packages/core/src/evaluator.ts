@@ -7,9 +7,13 @@ const CLOSED = 0x01;
 const LOCKED = 0x02;
 const EDGE = 0x04;
 
-export function evaluate(board: BoardType) {
+export function makeEvaluator() {
+  // scratchpad for evaluating piece axes
   const state = [0, 0, 0, 0, 0, 0, 0, 0];
+  return (board: BoardType) => evaluate(board, state);
+}
 
+function evaluate(board: BoardType, state: number[]) {
   function score(x: number, y: number) {
     const p = board[y][x];
 
