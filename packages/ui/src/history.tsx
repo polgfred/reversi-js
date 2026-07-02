@@ -1,8 +1,8 @@
-import { createRef, useContext, useLayoutEffect } from 'react';
+import { createRef, useLayoutEffect } from 'react';
 
 import { SideType, type MoveType } from '@reversi/core';
 
-import { GameContext } from './game-context';
+import { useGameContext } from './game-context';
 import styles from './styles.module.css';
 import { ThinkingSpinner } from './thinking';
 
@@ -16,7 +16,7 @@ function moveToString(move: MoveType) {
 }
 
 export function History() {
-  const { hist, side } = useContext(GameContext);
+  const { hist, side } = useGameContext();
 
   const ref = createRef<HTMLDivElement>();
 
