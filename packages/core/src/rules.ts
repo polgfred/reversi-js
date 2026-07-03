@@ -3,7 +3,7 @@ import { SideType, PieceType } from './types';
 
 type WritableMove = [number, number, ...number[]];
 
-const { BLACK, WHITE } = SideType;
+const { BLACK } = SideType;
 const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 
 type MoveGenerator = Generator<MoveType, void, void>;
@@ -45,45 +45,49 @@ export function* findMoves(board: BoardType, side: SideType): MoveGenerator {
   }
 }
 
-export function hasMove(board: BoardType, side: SideType): boolean {
-  // efficiently test whether we can move from this position
-  for (let y = 0; (y & ~7) === 0; ++y) {
-    for (let x = 0; (x & ~7) === 0; ++x) {
-      // only empty squares are moveable
-      if (board[y][x] !== EMPTY) {
+export function canMoveFrom(
+  board: BoardType,
+  x: number,
+  y: number,
+  p: PieceType
+) {
+  // see if we found a capture
+  for (let dy = -1; dy <= +1; ++dy) {
+    for (let dx = -1; dx <= +1; ++dx) {
+      if (dx === 0 && dy === 0) {
         continue;
       }
 
-      // see if we found a capture
-      for (let dy = -1; dy <= +1; ++dy) {
-        for (let dx = -1; dx <= +1; ++dx) {
-          if (dx === 0 && dy === 0) {
-            continue;
-          }
+      let nx = x;
+      let ny = y;
+      for (let count = 0; ; ++count) {
+        nx += dx;
+        ny += dy;
 
-          let nx = x;
-          let ny = y;
-          for (let count = 0; ; ++count) {
-            nx += dx;
-            ny += dy;
+        if (((nx | ny) & ~7) !== 0) {
+          break;
+        }
 
-            if (((nx | ny) & ~7) !== 0) {
-              break;
-            }
-
-            const np = board[ny][nx];
-            if (np === EMPTY) {
-              break;
-            } else if (np === side) {
-              if (count > 0) return true;
-              break;
-            }
-          }
+        const np = board[ny][nx];
+        if (np === EMPTY) {
+          break;
+        } else if (np === p) {
+          if (count > 0) return true;
+          break;
         }
       }
     }
   }
+}
 
+export function hasMove(board: BoardType, side: SideType): boolean {
+  // efficiently test whether we can move from this position
+  for (let y = 0; (y & ~7) === 0; ++y) {
+    for (let x = 0; (x & ~7) === 0; ++x) {
+      if (board[y][x] !== EMPTY) continue;
+      if (canMoveFrom(board, x, y, side)) return true;
+    }
+  }
   return false;
 }
 

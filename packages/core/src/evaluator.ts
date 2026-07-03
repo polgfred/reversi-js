@@ -1,3 +1,4 @@
+import { canMoveFrom } from './rules';
 import { type BoardType, PieceType, SideType } from './types';
 
 const { BLACK, WHITE } = SideType;
@@ -108,39 +109,10 @@ function evaluate(board: BoardType, state: number[], cfg: EvalConfig) {
   }
 
   function netCount(x: number, y: number) {
-    function canMove(side: SideType) {
-      for (let dy = -1; dy <= +1; ++dy) {
-        for (let dx = -1; dx <= +1; ++dx) {
-          if (dx === 0 && dy === 0) {
-            continue;
-          }
-
-          let nx = x;
-          let ny = y;
-          for (let count = 0; ; ++count) {
-            nx += dx;
-            ny += dy;
-
-            if (((nx | ny) & ~7) !== 0) {
-              break;
-            }
-
-            const np = board[ny][nx];
-            if (np === EMPTY) {
-              break;
-            } else if (np === side) {
-              if (count > 0) return 1;
-              break;
-            }
-          }
-        }
-      }
-
-      return 0;
-    }
-
     // net mobility from this square
-    return canMove(BLACK) - canMove(WHITE);
+    const black = canMoveFrom(board, x, y, BLACK) ? 1 : 0;
+    const white = canMoveFrom(board, x, y, WHITE) ? 1 : 0;
+    return black - white;
   }
 
   for (let y = 0; (y & ~7) === 0; ++y) {
