@@ -22,11 +22,12 @@ export function analyze(
   // remaining depth at the root, to measure how far a terminal is from here
   const rootLevel = level;
 
-  return loop(side, -Infinity, +Infinity);
+  return loop(rootLevel, side, -Infinity, +Infinity);
 
   // negamax with alpha-beta: every node maximizes its own score, and a child's
   // score (from the opponent's perspective) is negated to bring it into ours.
   function loop(
+    level: number,
     side: SideType,
     alpha: number,
     beta: number
@@ -35,7 +36,6 @@ export function analyze(
     const opp: SideType = -side;
 
     // leaf node: score the position from the side-to-move's perspective
-    // (SideType is +1 for black, -1 for white, and evaluate() is black-positive)
     if (level === 0) {
       return [side * evaluate(board), undefined] as const;
     }
@@ -44,8 +44,6 @@ export function analyze(
     let value = -Infinity;
     let play: MoveType | undefined;
 
-    level--;
-
     // analyze counter-moves from this position
     const source = findMoves(side);
     let moved = false;
@@ -53,7 +51,7 @@ export function analyze(
       moved = true;
 
       // score this move (negate the opponent's point of view)
-      const current = -loop(opp, -beta, -alpha)[0];
+      const current = -loop(level - 1, opp, -beta, -alpha)[0];
 
       // record the first move unconditionally, then only on improvement — so a
       // node with moves always yields a `play`, even if scores are infinite
@@ -70,14 +68,12 @@ export function analyze(
       }
     }
 
-    level++;
-
     // no legal move: this is a pass, not a loss. hand the turn to the opponent
     // and search their reply; if they can't move either, the game is over and
     // the winner is decided by piece count. `play` stays undefined (a pass).
     if (!moved) {
       if (hasMove(opp)) {
-        value = -loop(opp, -beta, -alpha)[0];
+        value = -loop(level, opp, -beta, -alpha)[0];
       } else {
         const [cb, cw] = getCounts();
         if (cb === cw) {
