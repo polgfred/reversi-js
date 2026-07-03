@@ -112,7 +112,7 @@ export function Game({ getMove }: GameProps) {
     >
       <div className={styles.gameContainer}>
         <Board board={board} />
-        <History />
+        <History gameOver={gameOver} />
         {gameOver && (
           <GameOverOverlay counts={counts} onPlayAgain={startGame} />
         )}

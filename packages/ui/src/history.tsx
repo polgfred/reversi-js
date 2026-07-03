@@ -15,7 +15,7 @@ function moveToString(move: MoveType) {
   return `${xValues[x]}${y + 1}`;
 }
 
-export function History() {
+export function History({ gameOver }: { gameOver: boolean }) {
   const { hist, side } = useGameContext();
 
   const ref = createRef<HTMLDivElement>();
@@ -43,7 +43,10 @@ export function History() {
                 // an empty cell is a pass, unless it's white's slot in the
                 // last row while white is still to play (the computer thinking)
                 const thinking =
-                  i === hist.length - 1 && j === 1 && side === WHITE;
+                  !gameOver &&
+                  i === hist.length - 1 &&
+                  j === 1 &&
+                  side === WHITE;
                 return (
                   <td
                     key={j}
