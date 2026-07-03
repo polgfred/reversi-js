@@ -146,8 +146,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
           board[y][x] = mine;
           replace(mine, move);
           switchSides();
-
-          yield [...move];
+          // this is live and needs to be copied by the consumer
+          yield move;
         } finally {
           switchSides();
           board[y][x] = EMPTY;

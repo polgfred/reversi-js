@@ -20,7 +20,9 @@ describe('Rules', () => {
 
   it('should find the moves from the initial position', () => {
     const { findMoves } = makeRules(newBoard(), BLACK);
-    const moves = [...findMoves()];
+    const moves = findMoves()
+      .map((move) => [...move])
+      .toArray();
     expect(moves).toEqual([
       [4, 2, 0, 0, 0, 0, 0, 0, 1, 0],
       [5, 3, 0, 0, 0, 1, 0, 0, 0, 0],

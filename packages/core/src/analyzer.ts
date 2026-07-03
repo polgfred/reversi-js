@@ -16,10 +16,8 @@ export function analyze(
   evaluate = makeEvaluator()
 ): readonly [number, MoveType | undefined] {
   // get the rules
-  const { getSide, findMoves, hasMove, pass, getCounts } = makeRules(
-    board,
-    side
-  );
+  const rules = makeRules(board, side);
+  const { findMoves, getCounts, getSide, hasMove, pass } = rules;
 
   // remaining depth at the root, to measure how far a terminal is from here
   const rootLevel = level;
@@ -59,7 +57,7 @@ export function analyze(
       // node with moves always yields a `play`, even if scores are infinite
       if (play === undefined || current > value) {
         value = current;
-        play = move;
+        play = [...move];
       }
       if (value >= beta) {
         source.return();

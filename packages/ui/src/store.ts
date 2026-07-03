@@ -18,8 +18,8 @@ export type History = readonly HistRow[];
 export type GameSnapshot = {
   board: BoardType;
   side: SideType;
-  moves: readonly MoveType[];
   counts: readonly [number, number];
+  moves: readonly MoveType[];
   gameOver: boolean;
   hist: History;
 };
@@ -40,23 +40,24 @@ function createGameStore(): GameStore {
   const events = new EventTarget();
 
   function readSnapshot(): GameSnapshot {
-    const moves = [...rules.findMoves()];
+    const moves = rules
+      .findMoves()
+      .map((move) => [...move] as MoveType)
+      .toArray();
 
     // if there are no moves, peek ahead to see if the game is over
     let gameOver = false;
     if (moves.length === 0) {
       rules.pass();
-      const probe = rules.findMoves();
-      gameOver = probe.next().done === true;
-      probe.return();
+      gameOver = !rules.hasMove();
       rules.pass();
     }
 
     return {
       board: rules.getBoard(),
       side: rules.getSide(),
-      moves,
       counts: rules.getCounts(),
+      moves,
       gameOver,
       hist: hist.map((row) => [row[0], row[1]]),
     };
