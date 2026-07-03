@@ -12,6 +12,7 @@ export interface Rules {
   readonly getBoard: () => BoardType;
   readonly getSide: () => SideType;
   readonly findMoves: () => MoveGenerator;
+  readonly hasMove: () => boolean;
   readonly doMove: (move: MoveType) => void;
   readonly pass: () => void;
   readonly getCounts: () => readonly [number, number];
@@ -156,6 +157,48 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     }
   }
 
+  function hasMove(): boolean {
+    // efficiently test whether we can move from this position
+    for (let y = 0; (y & ~7) === 0; ++y) {
+      for (let x = 0; (x & ~7) === 0; ++x) {
+        // only empty squares are moveable
+        if (board[y][x] !== EMPTY) {
+          continue;
+        }
+
+        // see if we found a capture
+        for (let dy = -1; dy <= +1; ++dy) {
+          for (let dx = -1; dx <= +1; ++dx) {
+            if (dx === 0 && dy === 0) {
+              continue;
+            }
+
+            let nx = x;
+            let ny = y;
+            for (let count = 0; ; ++count) {
+              nx += dx;
+              ny += dy;
+
+              if (((nx | ny) & ~7) !== 0) {
+                break;
+              }
+
+              const np = board[ny][nx];
+              if (np === EMPTY) {
+                break;
+              } else if (np === side) {
+                if (count > 0) return true;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
   function doMove(move: MoveType) {
     // get the coords from the capture
     const [x, y] = move;
@@ -192,6 +235,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     getBoard: () => board,
     getSide: () => side,
     findMoves,
+    hasMove,
     doMove,
     pass: switchSides,
     getCounts,

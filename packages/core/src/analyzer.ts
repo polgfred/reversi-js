@@ -16,20 +16,15 @@ export function analyze(
   evaluate = makeEvaluator()
 ): readonly [number, MoveType | undefined] {
   // get the rules
-  const { getSide, findMoves, pass, getCounts } = makeRules(board, side);
+  const { getSide, findMoves, hasMove, pass, getCounts } = makeRules(
+    board,
+    side
+  );
 
   // remaining depth at the root, to measure how far a terminal is from here
   const rootLevel = level;
 
   return loop(-Infinity, +Infinity);
-
-  // does the side to move have at least one legal move?
-  function hasMove() {
-    const source = findMoves();
-    const { done } = source.next();
-    source.return();
-    return !done;
-  }
 
   // negamax with alpha-beta: every node maximizes its own score, and a child's
   // score (from the opponent's perspective) is negated to bring it into ours.
