@@ -209,10 +209,6 @@ export function getCounts(board: BoardType) {
   return [cb, cw] as const;
 }
 
-export function otherSide(side: SideType) {
-  return side === BLACK ? WHITE : BLACK;
-}
-
 export interface Rules {
   readonly getBoard: () => BoardType;
   readonly getCounts: () => readonly [number, number];

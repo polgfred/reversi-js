@@ -49,7 +49,8 @@ function createGameStore(): GameStore {
     // if there are no moves, peek ahead to see if the game is over
     let gameOver = false;
     if (moves.length === 0) {
-      gameOver = !rules.hasMove(-side as SideType);
+      // @ts-expect-error side flip
+      gameOver = !rules.hasMove(-side);
     }
 
     return {
@@ -75,8 +76,8 @@ function createGameStore(): GameStore {
   }
 
   function switchSides() {
-    const opp = -side as SideType;
-    side = opp;
+    // @ts-expect-error side flip
+    side = -side;
     publish();
   }
 

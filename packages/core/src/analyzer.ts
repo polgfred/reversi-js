@@ -31,7 +31,8 @@ export function analyze(
     alpha: number,
     beta: number
   ): readonly [number, MoveType | undefined] {
-    const opp = -side as SideType;
+    // @ts-expect-error side flip
+    const opp: SideType = -side;
 
     // leaf node: score the position from the side-to-move's perspective
     // (SideType is +1 for black, -1 for white, and evaluate() is black-positive)
