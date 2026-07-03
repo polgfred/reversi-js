@@ -34,6 +34,7 @@ export type GameStore = {
 
 function createGameStore(): GameStore {
   let rules: Rules;
+  let side: SideType;
   let hist: [HistEntry, HistEntry][];
   let snapshot: GameSnapshot;
 
@@ -41,21 +42,19 @@ function createGameStore(): GameStore {
 
   function readSnapshot(): GameSnapshot {
     const moves = rules
-      .findMoves()
+      .findMoves(side)
       .map((move) => [...move] as MoveType)
       .toArray();
 
     // if there are no moves, peek ahead to see if the game is over
     let gameOver = false;
     if (moves.length === 0) {
-      rules.pass();
-      gameOver = !rules.hasMove();
-      rules.pass();
+      gameOver = !rules.hasMove(-side as SideType);
     }
 
     return {
       board: rules.getBoard(),
-      side: rules.getSide(),
+      side,
       counts: rules.getCounts(),
       moves,
       gameOver,
@@ -75,11 +74,16 @@ function createGameStore(): GameStore {
     events.dispatchEvent(new CustomEvent('change'));
   }
 
-  function handlePlay(move: MoveType) {
-    const moveSide = rules.getSide();
-    rules.doMove(move);
+  function switchSides() {
+    const opp = -side as SideType;
+    side = opp;
+    publish();
+  }
 
-    if (moveSide === BLACK) {
+  function handlePlay(move: MoveType) {
+    rules.doMove(side, move);
+
+    if (side === BLACK) {
       hist.push([move, null]);
     } else {
       const last = hist[hist.length - 1];
@@ -90,16 +94,16 @@ function createGameStore(): GameStore {
       }
     }
 
-    publish();
+    switchSides();
   }
 
   function handlePass() {
-    rules.pass();
-    publish();
+    switchSides();
   }
 
   function startGame() {
-    rules = makeRules(newBoard(), BLACK);
+    rules = makeRules(newBoard());
+    side = BLACK;
     hist = [];
     publish();
   }

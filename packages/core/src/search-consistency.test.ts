@@ -20,43 +20,38 @@ function referenceValue(
   level: number,
   evaluate: Evaluator
 ) {
-  const rules = makeRules(board, side);
-  const { getSide, findMoves, hasMove, pass, getCounts } = rules;
+  const rules = makeRules(board);
+  const { findMoves, hasMove, getCounts } = rules;
   const rootLevel = level;
 
-  function mm(lvl: number): number {
-    const s = getSide();
+  function mm(s: SideType, lvl: number): number {
+    const opp = -s as SideType;
     if (lvl === 0) {
       return s * evaluate(board);
     }
 
     let value = -Infinity;
     let moved = false;
-    const gen = findMoves();
+    const gen = findMoves(s);
     for (let r = gen.next(); !r.done; r = gen.next()) {
       moved = true;
-      value = Math.max(value, -mm(lvl - 1));
+      value = Math.max(value, -mm(opp, lvl - 1));
     }
 
     if (!moved) {
-      pass();
-      try {
-        if (hasMove()) {
-          value = -mm(lvl); // pass costs no ply, same as analyzer
-        } else {
-          const [cb, cw] = getCounts();
-          value =
-            cb === cw ? 0 : s * (cb > cw ? 1 : -1) * (MATE - (rootLevel - lvl));
-        }
-      } finally {
-        pass();
+      if (hasMove(opp)) {
+        value = -mm(opp, lvl); // pass costs no ply, same as analyzer
+      } else {
+        const [cb, cw] = getCounts();
+        value =
+          cb === cw ? 0 : s * (cb > cw ? 1 : -1) * (MATE - (rootLevel - lvl));
       }
     }
 
     return value;
   }
 
-  return mm(level);
+  return mm(side, level);
 }
 
 function countEmpties(board: BoardType) {
@@ -79,30 +74,31 @@ function fullGamePositions() {
   let side: SideType = BLACK;
 
   for (let guard = 0; guard < 200; guard++) {
+    const opp: SideType = side === BLACK ? WHITE : BLACK;
     samples.push({
       board: copyBoard(board),
       side,
       empties: countEmpties(board),
     });
 
-    const rules = makeRules(board, side);
-    const it = rules.findMoves();
+    const rules = makeRules(board);
+    const it = rules.findMoves(side);
     const first = it.next();
     it.return(); // undo the probe move
 
+    // legal move: make it, switch sides, and continue
     if (!first.done) {
-      rules.doMove(first.value as MoveType);
-      side = rules.getSide();
+      rules.doMove(side, first.value as MoveType);
+      side = opp;
       continue;
     }
 
     // no legal move: pass, unless the opponent is also stuck (game over)
-    const other = side === BLACK ? WHITE : BLACK;
-    const opponentStuck = !makeRules(board, other).hasMove();
-    if (opponentStuck) {
+    if (!rules.hasMove(opp)) {
       break;
     }
-    side = other;
+
+    side = opp;
   }
 
   return samples;

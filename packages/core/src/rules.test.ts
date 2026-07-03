@@ -4,7 +4,7 @@ import { makeRules } from './rules';
 import { type BoardType, SideType, PieceType } from './types';
 import { newBoard, dumpBoard } from './utils';
 
-const { BLACK } = SideType;
+const { BLACK, WHITE } = SideType;
 const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 
 // build a board from 8 strings of 'X' (black), 'O' (white), '.' (empty)
@@ -18,7 +18,7 @@ function make(rows: string[]): BoardType {
 
 describe('Rules', () => {
   it('should initialize the board', () => {
-    const { getBoard } = makeRules(newBoard(), BLACK);
+    const { getBoard } = makeRules(newBoard());
     const board = getBoard();
     dumpBoard(board);
     expect(board[3][3]).toBe(BLACK_PIECE);
@@ -28,8 +28,8 @@ describe('Rules', () => {
   });
 
   it('should find the moves from the initial position', () => {
-    const { findMoves } = makeRules(newBoard(), BLACK);
-    const moves = findMoves()
+    const { findMoves } = makeRules(newBoard());
+    const moves = findMoves(BLACK)
       .map((move) => [...move])
       .toArray();
     expect(moves).toEqual([
@@ -41,8 +41,8 @@ describe('Rules', () => {
   });
 
   it('has moves at the opening', () => {
-    const rules = makeRules(newBoard(), BLACK);
-    expect(rules.hasMove()).toBe(true);
+    const rules = makeRules(newBoard());
+    expect(rules.hasMove(BLACK)).toBe(true);
   });
 
   // the bug that ended a game early: one side stuck must NOT mean game over
@@ -59,12 +59,10 @@ describe('Rules', () => {
         '........',
         '........',
         '........',
-      ]),
-      BLACK
+      ])
     );
-    expect(rules.hasMove()).toBe(false); // black is stuck...
-    rules.pass();
-    expect(rules.hasMove()).toBe(true); // ...but white isn't — the game goes on
+    expect(rules.hasMove(BLACK)).toBe(false); // black is stuck...
+    expect(rules.hasMove(WHITE)).toBe(true); // ...but white isn't — the game goes on
   });
 
   it('sees both sides stuck on a full board', () => {
@@ -78,11 +76,9 @@ describe('Rules', () => {
         'XXXXXXXX',
         'XXXXXXXX',
         'XXXXXXXX',
-      ]),
-      BLACK
+      ])
     );
-    expect(rules.hasMove()).toBe(false);
-    rules.pass();
-    expect(rules.hasMove()).toBe(false);
+    expect(rules.hasMove(BLACK)).toBe(false);
+    expect(rules.hasMove(WHITE)).toBe(false);
   });
 });
