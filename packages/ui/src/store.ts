@@ -5,6 +5,7 @@ import {
   type MoveType,
   type Rules,
   SideType,
+  copyBoard,
   makeRules,
   newBoard,
 } from '@reversi/core';
@@ -54,9 +55,9 @@ function createGameStore(): GameStore {
     }
 
     return {
-      board: rules.getBoard(),
+      board: copyBoard(rules.getBoard()),
       side,
-      counts: rules.getCounts(),
+      counts: [...rules.getCounts()],
       moves,
       gameOver,
       hist: hist.map((row) => [row[0], row[1]]),

@@ -179,20 +179,20 @@ export function replace(board: BoardType, move: MoveType, p: PieceType) {
   }
 }
 
-export function getCounts(board: BoardType) {
-  let cb = 0;
-  let cw = 0;
+export function getCounts(board: BoardType, counts: [number, number]) {
+  counts[0] = 0;
+  counts[1] = 0;
 
   // loop through the squares
   for (let y = 0; (y & ~7) === 0; ++y) {
     for (let x = 0; (x & ~7) === 0; ++x) {
       const p = board[y][x];
-      if (p === BLACK_PIECE) cb++;
-      else if (p === WHITE_PIECE) cw++;
+      if (p === BLACK_PIECE) counts[0]++;
+      else if (p === WHITE_PIECE) counts[1]++;
     }
   }
 
-  return [cb, cw] as const;
+  return counts;
 }
 
 export interface Rules {
@@ -204,9 +204,12 @@ export interface Rules {
 }
 
 export function makeRules(board: BoardType): Rules {
+  // reuse buffer
+  const counts: [number, number] = [0, 0];
+
   return {
     getBoard: () => board,
-    getCounts: () => getCounts(board),
+    getCounts: () => getCounts(board, counts),
     findMoves: (side: SideType) => findMoves(board, side),
     hasMove: (side: SideType) => hasMove(board, side),
     doMove: (side: SideType, move: MoveType) => doMove(board, side, move),
