@@ -43,7 +43,9 @@ for (let i = 0; i < players.length; i++) {
 }
 const secs = ((Date.now() - t0) / 1000).toFixed(0);
 
-console.log(`\n=== standings (level ${LEVEL}, ${OPENINGS} openings/pairing, ${secs}s) ===`);
+console.log(
+  `\n=== standings (level ${LEVEL}, ${OPENINGS} openings/pairing, ${secs}s) ===`
+);
 [...acc.entries()]
   .map(([name, s]) => ({ name, ...s, pct: (s.score / s.games) * 100 }))
   .sort((x, y) => y.pct - x.pct)

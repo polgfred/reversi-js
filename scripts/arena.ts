@@ -1,12 +1,18 @@
 import { fileURLToPath } from 'node:url';
 
-import { analyze } from './analyzer';
-import { type EvalConfig, makeEvaluator } from './evaluator';
-import { makeRules } from './rules';
-import { type BoardType, type MoveType, SideType } from './types';
-import { copyBoard, newBoard } from './utils';
+import {
+  analyze,
+  type BoardType,
+  copyBoard,
+  type EvalConfig,
+  makeEvaluator,
+  makeRules,
+  type MoveType,
+  newBoard,
+  SideType,
+} from '@reversi/core';
 
-const { BLACK, WHITE } = SideType;
+const { BLACK } = SideType;
 
 // a tunable opponent: a name plus whatever evaluator weights it overrides
 export interface Player {
@@ -36,7 +42,10 @@ function randomOpening(plies: number, rand: () => number): MoveType[] {
   const rules = makeRules(newBoard(), BLACK);
   const moves: MoveType[] = [];
   for (let i = 0; i < plies; i++) {
-    const legal = [...rules.findMoves()];
+    const legal = rules
+      .findMoves()
+      .map((move) => [...move] as MoveType)
+      .toArray();
     if (legal.length === 0) break;
     const move = legal[Math.floor(rand() * legal.length)];
     rules.doMove(move);
@@ -60,7 +69,12 @@ export function playGame(
     const side = rules.getSide();
     const evaluate = side === BLACK ? blackEval : whiteEval;
     // hand the search a copy so it can never corrupt the live game board
-    const [, move] = analyze(copyBoard(rules.getBoard()), side, level, evaluate);
+    const [, move] = analyze(
+      copyBoard(rules.getBoard()),
+      side,
+      level,
+      evaluate
+    );
     if (move === undefined) {
       rules.pass();
       passes++;
@@ -127,7 +141,13 @@ export function runMatch(
     onGame?.(++done, total);
   }
 
-  return { games: openings * 2, aWins, bWins, draws, aScore: aWins + draws * 0.5 };
+  return {
+    games: openings * 2,
+    aWins,
+    bWins,
+    draws,
+    aScore: aWins + draws * 0.5,
+  };
 }
 
 // run directly with `npx tsx src/arena.ts` (env: LEVEL, OPENINGS, SEED)
