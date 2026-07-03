@@ -4,14 +4,14 @@ import { makeEvaluator } from './evaluator';
 import { type BoardType, PieceType } from './types';
 import { newBoard } from './utils';
 
-const O = PieceType.WHITE_PIECE;
-const X = PieceType.BLACK_PIECE;
-const _ = PieceType.EMPTY;
+const { EMPTY, WHITE_PIECE, BLACK_PIECE } = PieceType;
 
 // build an 8x8 board from 8 strings of 'X' (black), 'O' (white), '.' (empty)
 function make(rows: string[]): BoardType {
   return rows.map((row) =>
-    Array.from(row, (c) => (c === 'X' ? X : c === 'O' ? O : _))
+    Array.from(row, (c) =>
+      c === 'X' ? BLACK_PIECE : c === 'O' ? WHITE_PIECE : EMPTY
+    )
   );
 }
 
