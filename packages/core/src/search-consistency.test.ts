@@ -20,7 +20,8 @@ function referenceValue(
   level: number,
   evaluate: Evaluator
 ) {
-  const { getSide, findMoves, pass, getCounts } = makeRules(board, side);
+  const rules = makeRules(board, side);
+  const { getSide, findMoves, hasMove, pass, getCounts } = rules;
   const rootLevel = level;
 
   function mm(lvl: number): number {
@@ -40,10 +41,7 @@ function referenceValue(
     if (!moved) {
       pass();
       try {
-        const probe = findMoves();
-        const opponentCanMove = !probe.next().done;
-        probe.return();
-        if (opponentCanMove) {
+        if (hasMove()) {
           value = -mm(lvl); // pass costs no ply, same as analyzer
         } else {
           const [cb, cw] = getCounts();
@@ -100,9 +98,7 @@ function fullGamePositions() {
 
     // no legal move: pass, unless the opponent is also stuck (game over)
     const other = side === BLACK ? WHITE : BLACK;
-    const probe = makeRules(board, other).findMoves();
-    const opponentStuck = probe.next().done;
-    probe.return();
+    const opponentStuck = !makeRules(board, other).hasMove();
     if (opponentStuck) {
       break;
     }
