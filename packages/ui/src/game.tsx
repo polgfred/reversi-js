@@ -58,9 +58,7 @@ export function Game({ getMove }: GameProps) {
 
   // drive the turn: pass when stuck, otherwise let the computer play white
   useEffect(() => {
-    if (gameOver) {
-      return;
-    }
+    if (gameOver) return;
 
     // the side to move is stuck but the game isn't over, so pass
     if (moves.length === 0) {
@@ -69,26 +67,27 @@ export function Game({ getMove }: GameProps) {
     }
 
     if (side === WHITE) {
-      const timer = setTimeout(() => {
-        getMove(board, side).then((move) => {
-          if (move) {
-            handlePlay(move);
-          } else {
-            handlePass();
-          }
-        });
-      }, 1000);
-      return () => clearTimeout(timer);
+      // request the move right away, but wait out the piece-animation delay
+      let cancelled = false;
+      Promise.all([
+        getMove(board, side),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ]).then(([move]) => {
+        if (cancelled) return;
+        if (move) handlePlay(move);
+        else handlePass();
+      });
+      return () => {
+        cancelled = true;
+      };
     }
-  }, [board, side, moves, gameOver, getMove, handlePlay, handlePass]);
+  }, [board, gameOver, getMove, handlePass, handlePlay, moves, side]);
 
   // handle user click
   const handleClick = useCallback(
-    ({ x, y }: Coords) => {
-      const play = getPlay({ x, y });
-      if (play) {
-        handlePlay(play);
-      }
+    (xy: Coords) => {
+      const play = getPlay(xy);
+      if (play) handlePlay(play);
     },
     [getPlay, handlePlay]
   );
