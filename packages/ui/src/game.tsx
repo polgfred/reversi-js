@@ -99,11 +99,11 @@ export function Game({ getMove }: GameProps) {
       const block = board
         .map(
           (row) =>
-            `  [${row.map((p) => (p === 0 ? '_' : p === 1 ? 'X' : 'O')).join(', ')}],`
+            `  '${row.map((p) => (p === 0 ? '.' : p === 1 ? 'X' : 'O')).join('')}',`
         )
         .join('\n');
       // eslint-disable-next-line no-console
-      console.log(`const board = [\n${block}\n] as BoardType;\n`);
+      console.log(`const board = make([\n${block}\n]);\n`);
     };
   }, [board]);
 
