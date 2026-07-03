@@ -1,7 +1,7 @@
 import type { MoveType, BoardType } from './types';
 import { SideType, PieceType } from './types';
 
-type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+type WritableMove = [number, number, ...number[]];
 
 const { BLACK, WHITE } = SideType;
 const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
@@ -29,7 +29,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     }
   }
 
-  function canMove(move: Mutable<MoveType>) {
+  function canMove(move: WritableMove) {
     const [x, y] = move;
 
     // only empty squares are moveable
@@ -118,7 +118,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
   function* findMoves(): MoveGenerator {
     // reuse capture buffer
-    const move: Mutable<MoveType> = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const move: WritableMove = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     // my piece value
     const mine = side === BLACK ? BLACK_PIECE : WHITE_PIECE;

@@ -4,7 +4,6 @@ import { PieceType } from './types';
 const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 
 export function copyBoard(board: BoardType): BoardType {
-  // @ts-expect-error arrays are the same size
   return board.map((row) => row.map((p) => p));
 }
 

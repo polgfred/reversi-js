@@ -10,7 +10,6 @@ const _ = PieceType.EMPTY;
 
 // build an 8x8 board from 8 strings of 'X' (black), 'O' (white), '.' (empty)
 function make(rows: string[]): BoardType {
-  // @ts-expect-error we know the arrays are the right size
   return rows.map((row) =>
     Array.from(row, (c) => (c === 'X' ? X : c === 'O' ? O : _))
   );
