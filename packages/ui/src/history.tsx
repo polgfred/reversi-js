@@ -40,14 +40,24 @@ export function History() {
           {hist.map((row, i) => (
             <tr key={i}>
               {row.map((move, j) => {
-                if (move) {
-                  return <td key={j}>{moveToString(move)}</td>;
-                }
                 // an empty cell is a pass, unless it's white's slot in the
                 // last row while white is still to play (the computer thinking)
                 const thinking =
                   i === hist.length - 1 && j === 1 && side === WHITE;
-                return <td key={j}>{thinking ? <ThinkingSpinner /> : null}</td>;
+                return (
+                  <td
+                    key={j}
+                    className={thinking ? styles.thinkingCell : undefined}
+                  >
+                    {thinking ? (
+                      <ThinkingSpinner />
+                    ) : move ? (
+                      moveToString(move)
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                );
               })}
             </tr>
           ))}

@@ -138,6 +138,11 @@
   }
 }
 
+/* drop the inline line box when we're showing the spinner */
+.thinkingCell {
+  line-height: 0;
+}
+
 @keyframes game-in {
   from {
     opacity: 0;

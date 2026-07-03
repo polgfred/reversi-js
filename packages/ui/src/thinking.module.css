@@ -1,0 +1,77 @@
+/* thinking spinner: 8 fading bars, sized so it never grows the history row */
+.spinner {
+  display: block;
+  height: 20px;
+  margin: 0 auto;
+  position: relative;
+  width: 20px;
+}
+
+.spinner span {
+  animation: spinner 1s linear infinite;
+  inset: 0;
+  position: absolute;
+  transform-origin: 10px 10px;
+}
+
+.spinner span::after {
+  background: #486;
+  border-radius: 20%;
+  content: '';
+  display: block;
+  height: 5px;
+  left: 9px;
+  position: absolute;
+  top: 1px;
+  width: 2px;
+}
+
+.spinner span:nth-child(1) {
+  animation-delay: -0.875s;
+  transform: rotate(0deg);
+}
+
+.spinner span:nth-child(2) {
+  animation-delay: -0.75s;
+  transform: rotate(45deg);
+}
+
+.spinner span:nth-child(3) {
+  animation-delay: -0.625s;
+  transform: rotate(90deg);
+}
+
+.spinner span:nth-child(4) {
+  animation-delay: -0.5s;
+  transform: rotate(135deg);
+}
+
+.spinner span:nth-child(5) {
+  animation-delay: -0.375s;
+  transform: rotate(180deg);
+}
+
+.spinner span:nth-child(6) {
+  animation-delay: -0.25s;
+  transform: rotate(225deg);
+}
+
+.spinner span:nth-child(7) {
+  animation-delay: -0.125s;
+  transform: rotate(270deg);
+}
+
+.spinner span:nth-child(8) {
+  animation-delay: 0s;
+  transform: rotate(315deg);
+}
+
+@keyframes spinner {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
