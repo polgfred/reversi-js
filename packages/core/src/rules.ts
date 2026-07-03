@@ -9,33 +9,26 @@ const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 type MoveGenerator = Generator<MoveType, void, void>;
 
 export function* findMoves(board: BoardType, side: SideType): MoveGenerator {
-  // reuse capture buffer
+  // capture buffer
   const move: WritableMove = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-  // my piece value
-  const mine = side === BLACK ? BLACK_PIECE : WHITE_PIECE;
-  const theirs = side === BLACK ? WHITE_PIECE : BLACK_PIECE;
+  const mine: PieceType = side;
+  // @ts-expect-error piece flip
+  const theirs: PieceType = -mine;
 
   // loop through the squares
   for (let y = 0; (y & ~7) === 0; ++y) {
     for (let x = 0; (x & ~7) === 0; ++x) {
-      // only empty squares are moveable
-      if (board[y][x] !== EMPTY) {
-        continue;
-      }
+      // only empty squares are playable
+      if (board[y][x] !== EMPTY) continue;
 
-      // look for captures
       move[0] = x;
       move[1] = y;
-      if (!getCaptures(board, side, move)) {
-        // not a valid move
-        continue;
-      }
+      if (!getCaptures(board, side, move)) continue;
 
       try {
         board[y][x] = mine;
         replace(board, move, mine);
-        // this is live and needs to be copied by the consumer
+        // IMPORTANT! this is live and needs to be copied by the consumer
         yield move;
       } finally {
         board[y][x] = EMPTY;
@@ -51,27 +44,31 @@ export function canMoveFrom(
   y: number,
   p: PieceType
 ) {
+  // only empty squares are moveable
+  if (board[y][x] !== EMPTY) return false;
+
   // see if we found a capture
   for (let dy = -1; dy <= +1; ++dy) {
     for (let dx = -1; dx <= +1; ++dx) {
-      if (dx === 0 && dy === 0) {
-        continue;
-      }
+      // (don't count 0, 0)
+      if (dx === 0 && dy === 0) continue;
 
+      // try to find a capture starting from (x, y)
       let nx = x;
       let ny = y;
       for (let count = 0; ; ++count) {
         nx += dx;
         ny += dy;
 
-        if (((nx | ny) & ~7) !== 0) {
-          break;
-        }
+        // we've gone off the board, no capture
+        if (((nx | ny) & ~7) !== 0) break;
 
+        // stop when we hit an empty square
         const np = board[ny][nx];
-        if (np === EMPTY) {
-          break;
-        } else if (np === p) {
+        if (np === EMPTY) break;
+        // we hit our own piece
+        if (np === p) {
+          // see if we captured anything
           if (count > 0) return true;
           break;
         }
@@ -84,7 +81,6 @@ export function hasMove(board: BoardType, side: SideType): boolean {
   // efficiently test whether we can move from this position
   for (let y = 0; (y & ~7) === 0; ++y) {
     for (let x = 0; (x & ~7) === 0; ++x) {
-      if (board[y][x] !== EMPTY) continue;
       if (canMoveFrom(board, x, y, side)) return true;
     }
   }
@@ -99,9 +95,7 @@ export function getCaptures(
   const [x, y] = move;
 
   // only empty squares are moveable
-  if (board[y][x] !== EMPTY) {
-    return false;
-  }
+  if (board[y][x] !== EMPTY) return false;
 
   // whether we found a capture
   let found = false;
@@ -113,9 +107,7 @@ export function getCaptures(
   for (let dy = -1; dy <= 1; ++dy) {
     for (let dx = -1; dx <= 1; ++dx) {
       // (don't count 0, 0)
-      if (dx === 0 && dy === 0) {
-        continue;
-      }
+      if (dx === 0 && dy === 0) continue;
 
       // try to find a capture starting from (x, y)
       let nx = x;
@@ -126,16 +118,11 @@ export function getCaptures(
         ny += dy;
 
         // we've gone off the board, no capture
-        if (((nx | ny) & ~7) !== 0) {
-          break;
-        }
+        if (((nx | ny) & ~7) !== 0) break;
 
         // stop when we hit an empty square
         const p = board[ny][nx];
-        if (p === EMPTY) {
-          break;
-        }
-
+        if (p === EMPTY) break;
         // we hit our own piece
         if (p === side) {
           // see if we captured anything
@@ -176,9 +163,7 @@ export function replace(board: BoardType, move: MoveType, p: PieceType) {
   for (let dy = -1; dy <= 1; ++dy) {
     for (let dx = -1; dx <= 1; ++dx) {
       // (don't count 0, 0)
-      if (dx === 0 && dy === 0) {
-        continue;
-      }
+      if (dx === 0 && dy === 0) continue;
 
       // flip `count` pieces starting from (x, y)
       let nx = x;
@@ -202,11 +187,8 @@ export function getCounts(board: BoardType) {
   for (let y = 0; (y & ~7) === 0; ++y) {
     for (let x = 0; (x & ~7) === 0; ++x) {
       const p = board[y][x];
-      if (p === BLACK_PIECE) {
-        cb++;
-      } else if (p === WHITE_PIECE) {
-        cw++;
-      }
+      if (p === BLACK_PIECE) cb++;
+      else if (p === WHITE_PIECE) cw++;
     }
   }
 
