@@ -1,9 +1,12 @@
-import type { MoveType, BoardType } from './types';
-import { SideType, PieceType } from './types';
+import {
+  type BoardType,
+  type MoveType,
+  type SideType,
+  PieceType,
+} from './types';
 
 type WritableMove = [number, number, ...number[]];
 
-const { BLACK } = SideType;
 const { EMPTY, BLACK_PIECE, WHITE_PIECE } = PieceType;
 
 type MoveGenerator = Generator<MoveType, void, void>;
@@ -144,13 +147,11 @@ export function getCaptures(
 export function doMove(board: BoardType, side: SideType, move: MoveType) {
   // get the coords from the capture
   const [x, y] = move;
-
-  // piece values
-  const mine = side === BLACK ? BLACK_PIECE : WHITE_PIECE;
+  const mine: PieceType = side;
 
   // put down the piece and do the flips
   board[y][x] = mine;
-  replace(board, move, mine);
+  replace(board, move, side);
 }
 
 export function replace(board: BoardType, move: MoveType, p: PieceType) {
