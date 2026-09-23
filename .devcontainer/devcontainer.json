@@ -2,7 +2,7 @@
 	"name": "Reversi-JS",
 	"image": "mcr.microsoft.com/devcontainers/base:trixie",
 	"features": {
-		"./features/bun": {}
+		"./features/node": {}
 	},
 	"customizations": {
 		"vscode": {
